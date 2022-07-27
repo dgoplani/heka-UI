@@ -1,0 +1,98 @@
+.outer-body {
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../../../assets/data-bg-min.jpg');
+    background-size: cover;
+    overflow: auto;
+}
+
+.outer-body > .row {
+    height: 100%;
+}
+
+.login-container {
+    margin: 0;
+    padding: 0 10px; 
+    min-height: 480px;
+    min-width: 360px;
+    width: 25vw;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 5px 5px 3px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    border-bottom: 1px solid gray;
+}
+
+.logo > img {
+    width: 50%;
+}
+
+.login-heading > div {
+    font-size: 2.75em;
+    margin-top: 25px;
+}
+
+.login-container > .row,
+.login-container > form > .row {
+    margin: 15px auto;
+}
+
+.login-input  {
+    position: relative;
+    padding-top: 15px;
+    width: 65%;
+}
+
+.login-input > input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    background: white;
+    outline: none;
+    font-size: 1.25em;
+    text-align: center;
+}
+
+.login-input > span {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+    font-size: 1.25em;
+    color: gray;
+    width: auto;
+    text-align: center;
+    transition: 0.2s;
+    text-transform: uppercase;
+}
+
+.login-input > input:valid ~ span,
+.login-input > input:focus ~ span {
+    color: grey;
+    transform: translateY(-1em);
+    font-size: 1em;
+    padding: 0px 5px;
+    letter-spacing: 0.1em;
+    background: whitesmoke;
+    color: black;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+}
+
+.login-error {
+    color: red;
+}
+
+.hide-msg {
+ visibility: hidden;
+}
+
+button.btn-login {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    width: 65%;
+    font-size: 1.75em;
+    border-radius: 5px;
+}

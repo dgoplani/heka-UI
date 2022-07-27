@@ -1,0 +1,67 @@
+#!/usr/bin/python
+
+import re
+import os
+import json
+import infoblox.common.util as cu
+import infoblox.common.ilog as ilog
+
+# regEx for finding the bloxconnect config
+pattern = '(\n\n    <Location\s+"/bloxconnect">.*?</Location>|\n\n    <Location\s+/bloxconnect>.*?</Location>)'
+# config file paths
+file_path = "/usr/conf/tmpl-one-httpd.conf"
+bkp_file_path = "/usr/conf/tmpl-one-httpd.conf.bkp"
+new_file_path = "/usr/conf/new-tmpl-one-httpd.conf"
+
+def remove_config():
+    entries = []
+    new_contents = ''
+    # Checking config file existence
+    if not os.path.exists(file_path):
+        ilog.log("File doesn't exists: ", file_path)
+        return ('FAILURE', "File doesn't exists: %s" % file_path)
+    # Reading file to find bloxconnect config
+    with open(file_path, "r") as cf:
+        file_contents = cf.read()
+        entries = re.findall(pattern, file_contents , re.DOTALL|re.MULTILINE)
+        new_contents = file_contents
+    if len(entries) != 0:
+        #removing all found config
+        for e in entries:
+            new_contents = new_contents.replace(e, "")
+        # change filesystem to read-write
+        mount_rw = cu.iexec('mount', '-o', 'remount', 'rw', '/')
+        if mount_rw != 0:
+            ilog.log("mount rw not success")
+            return('FAILURE', 'mount rw not success')
+        # write new config file
+        with open(new_file_path, "w") as nf:
+            nf.write(new_contents)
+        # replacing file
+        os.rename(new_file_path, file_path)
+        # change filesystem to read-only
+        mount_ro = cu.iexec('mount', '-o', 'remount', 'ro', '/')
+        if mount_ro != 0:
+            ilog.log("mount ro not success")
+            return('FAILURE', 'mount ro not success')
+        # Killing httpd process, it will restart with new config
+        kill_httpd = cu.iexec('pkill', 'httpd')
+        if kill_httpd != 0:
+            ilog.log("Failed to restart httpd process post config changes");
+            return('FAILURE', 'Failed to restart httpd process post config changes')
+        ilog.log("Successfully removed the bloxconnect redirect config from httpd config")
+    else:
+        ilog.log("No bloxconnect config found in httpd to remove")
+        return('FAILURE', 'No bloxconnect config found in httpd to remove')
+    return ('SUCCESS', 'none')
+
+def dump_json(data):
+    print(json.dumps(data))
+
+if __name__ == "__main__":
+    try:
+        (status,err) = remove_config()
+        dump_json({'status': status, 'error': err})
+    except Exception as e:
+        ilog.log('Error occurred while removing bloxconnect httpd configuration : %s' % e)
+        dump_json({'status': 'FAILURE', 'error':str(e)})

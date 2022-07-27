@@ -1,0 +1,99 @@
+.full-container {
+    position: absolute;
+    display: flex;
+    box-sizing: border-box;
+    margin: auto;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: white;
+}
+
+.loader-container {
+    position: relative;
+    width: calc(var(--s)*4px);
+    height: calc(var(--s)*4px);
+    margin: 0;
+    padding: 0;
+}
+
+.loader-head {
+    display: flex;
+    position: absolute;
+    margin: auto;
+    width: 100%;
+    height: calc(var(--s)*4px);
+    bottom: calc(var(--s)*4px/2 + var(--s)*1em/20 + 1em);
+    white-space: nowrap;
+    overflow: visible;
+    justify-content: center;
+    align-items: center;
+    font-size: calc(var(--s)*1em/15);
+}
+
+.loader-text {
+    display: flex;
+    position: absolute;
+    width: calc(var(--s)*4px);
+    height: calc(var(--s)*4px);
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    font-size: calc(var(--s)*1em/20);
+    font-weight: 300;
+    color: black;
+    animation: animateTxt 1s linear alternate infinite;
+}
+
+@keyframes animateTxt {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.loader {
+    position: absolute;
+    height: calc(var(--s)*4px);
+    width: calc(var(--s)*4px);
+}
+
+.loader > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    transform: rotate(calc((360deg)/var(--s)*var(--i)));
+}
+
+.loader > span::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1em;
+    width: 1em;
+    border-radius: 50%;
+    background: dodgerblue;
+    /* box-shadow: 0 0 1px rgba(0, 0, 0, 0.5), 0 0 5px rgba(30, 144, 255, 0.5), 0 0 10px rgba(30, 144, 255, 0.3), 0 0 25px rgba(30, 144, 255, 0.1); */
+    animation: aniLoader 1.5s linear infinite;
+    animation-delay: calc(var(--i)*1.5s/var(--s));
+}
+
+@keyframes aniLoader {
+    0% {
+        transform: scale(1);
+    }
+    85%, 100% {
+        transform: scale(0);
+    }
+}

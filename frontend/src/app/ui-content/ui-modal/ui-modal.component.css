@@ -1,0 +1,94 @@
+div.modalWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px); */
+    z-index: 110;
+    overflow: auto;
+}
+
+@keyframes modalAnimation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+div.modalContent {
+    background: white;
+    margin: 5vh auto;
+    min-width: 400px;
+    min-height: 90vh;
+    width: 70vw;
+    border-radius: 2px;
+    overflow: auto;
+    animation: modalAnimation 0.2s;
+    z-index: 11;
+}
+
+div.modalHeader > div.container-fluid {
+    padding: 0;
+    margin: auto;
+    overflow: hidden;
+}
+
+div.modalHeader > div.container-fluid > div.row {
+    margin: auto;
+    padding: 5px 0px;
+    height: 50px;
+    border-bottom: 2px solid darkgray;
+    overflow: hidden;
+}
+
+span.modalHeader-text {
+    font-size: 1.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+div.modalBody > div.container-fluid {
+    padding: 0px 10px;
+    width: 100%;
+    height: calc(90vh - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+div.modalBody > div.container-fluid > div.row {
+    padding: 5px;
+    border-bottom: 1px solid darkgrey;
+}
+
+.section-title {
+    font-weight: 600;
+}
+
+.sha-text {
+    font-size: smaller;
+    color: grey;
+}
+
+/* ul.fa-ul {
+    margin: 0 0 0 auto;
+    width: 100%;
+}
+
+ul.fa-ul > li {
+    width: 100%;
+    text-overflow: break-word;
+} */
+
+button.btn-modal-close {
+    float: right;
+    border: none;
+    outline: none;
+}

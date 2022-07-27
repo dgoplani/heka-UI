@@ -1,0 +1,210 @@
+div.loading, div.wrapper {
+    position: relative;
+    padding: 0;
+    height: calc(100vh - 42px);
+    width: 100%;
+}
+
+.node-name-selected {
+    max-width: 95%;
+    word-wrap: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.node-name-dropdown {
+    max-width: 100%;
+    word-wrap: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+div.node-select ul {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+div.node-select > * {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+div.node-select > button {
+    border: 1px solid grey;
+    margin: 5px 0;
+    padding: 3px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.node-select input {
+    margin: 0px 5px;
+    width: calc(100% - 10px);
+}
+
+table.node-summary, table.hotfix-summary {
+    width: 100%;
+}
+
+table.node-summary tr, table.hotfix-summary tr {
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid lightgray;
+}
+
+table.node-summary th, table.hotfix-summary th {
+    font-weight: 600;
+}
+
+table.node-summary th, 
+table.hotfix-summary th,
+table.node-summary td, 
+table.hotfix-summary td
+{
+    padding: 0 5px;
+}
+
+.online {
+    text-align: center;
+    color: green;
+    background: lime;
+}
+
+.offline {
+    text-align: center;
+    color: red;
+    background: lightpink;
+}
+
+div.hf-table-wrapper,
+div.hf-table-wrapper thead tr {
+    background-color: whitesmoke;
+}
+
+div.hf-table-wrapper tbody tr.default {
+    background-color: white;
+}
+
+th, td {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    width: fit-content;
+    word-break: normal;
+    overflow: hidden;
+    /* vertical-align: middle; */
+    /* white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; */
+}
+
+tr.table-item {
+    background-color: white;
+}
+
+tr.table-item > td,
+tr.table-item > th
+{ 
+    padding: 2px 5px;
+}
+
+tr.table-item:hover {
+    background-color: rgb(211, 211, 211);
+}
+
+td.installed {
+    color: limegreen;
+}
+
+td.imp-not-installed {
+    color: red;
+}
+
+td.rmd-not-installed {
+    color: blue;
+}
+
+tr.installed {
+    background: lightgreen;
+}
+
+tr.imp-not-installed {
+    background: lightpink;
+}
+
+tr.rmd-not-installed {
+    background: lightskyblue;
+}
+
+.btn-table-top, .search-box, .result-table-top {
+    border: 1px solid grey;
+    border-radius: 25px;
+    margin: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.btn-table-top {
+    border-radius: 5px;
+} 
+
+.result-table-top {
+    vertical-align: middle;
+    border: none;
+    color: blue;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.col-head {
+    padding: 3px 5px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1.1em;
+    word-break: break-word;
+}
+
+.sort-col,
+th.col-head:hover {
+    background-color: lightgray;
+}
+
+th.col-head .sort-arrow {
+    display: none;
+    /* visibility: hidden; */
+}
+
+th.col-head:hover .sort-arrow,
+th.sort-col .sort-arrow {
+    display: inline;
+    /* visibility: visible; */
+}
+
+button.hotfix-name-btn {
+    border: none;
+    padding: 0;
+    color: black;
+    word-break: break-all;
+    min-width: 100px;
+    background-color: transparent;
+}
+
+button.hotfix-name-btn:hover {
+    text-decoration: underline;
+    color: blue;
+}
+
+button.btn-plus-minus {
+    border: none;
+    color: black;
+    background-color: transparent;
+}
+
+button.btn-plus-minus:hover {
+    transform: scale(1.2);
+}

@@ -1,0 +1,93 @@
+div.n-wrapper {
+    width: 100%;
+    padding: 0 0 5px 0;
+    width: 100%;
+    color: white;
+}
+
+.entry {
+    animation: slideIn 300ms ease-in;
+}
+
+.exit {
+    animation: slideOut 300ms ease-out;
+}
+
+@keyframes slideIn {
+    0% {
+        display: none;
+        opacity: 0;
+        transform: translateX(260px);
+    }
+    100% {
+        display: block;
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        display: block;
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    100% {
+        display: none;
+        opacity: 0;
+        transform: translateX(260px);
+    }
+}
+
+.n-hotfix-wrapper {
+    width: 100%;
+    padding: 5px;
+    color: white;
+    border-radius: 5px;
+    background: rgb(96, 96, 96);
+}
+
+.n-hotfix-header {
+    color: darkgray;
+    border-bottom: 1px solid lightgray;
+}
+
+.n-hotfix-body {
+    text-align: justify;
+    font-size: smaller;
+    color: white;
+}
+
+.n-hotfix-footer {
+    color: white;
+    border-top: 1px solid rgb(56, 56, 56);
+}
+
+button.n-btn-action {
+    vertical-align: middle;
+    color: white;
+    border: none;
+    background: transparent;
+    font-weight: 500;
+}
+
+button.n-btn-action:hover {
+    color: black;
+    font-weight: 600;
+}
+
+button.n-btn-action > span.btn-symbol {
+    display: none;
+}
+
+button.n-btn-action:hover > span.btn-symbol {
+    display: inline;
+}
+
+.important {
+    color: crimson;
+}
+
+.recommended {
+    color: dodgerblue;
+}

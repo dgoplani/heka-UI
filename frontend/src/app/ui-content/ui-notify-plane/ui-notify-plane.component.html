@@ -1,0 +1,25 @@
+<app-ui-modal #hotfixModal [plane_level]="110"></app-ui-modal>
+
+<div class="containerfluid">
+    <div class="blank-notification-plane" *ngIf="isOpen" (click)="close()"></div>
+    <div class="col notification-alerts-plane">
+        <ng-template #notification></ng-template>
+    </div>
+    <div class="col notification-history-plane bg-dark" [@slide]="isOpen">
+        <div class="row n-header align-items-center m-0 p-0">
+            <div class="col">
+                Notifications
+            </div>
+        </div>
+        <div class="row n-body m-0 p-0">
+            <div>
+                <ng-template #notification_history></ng-template>
+            </div>
+        </div>
+        <div class="row n-footer align-items-center m-0 p-0">
+            <button class="btn btn-secondary p-0 m-0" type="button" role="button" (click)="clearAll()">
+                Clear all Notifications
+            </button>
+        </div>
+    </div>
+</div>

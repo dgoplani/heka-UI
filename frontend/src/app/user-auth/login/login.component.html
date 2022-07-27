@@ -1,0 +1,59 @@
+<div class="container-fluid outer-body">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-auto login-container">
+            <div class="row justify-content-center logo">
+                <img class="img-fluid pb-3" src="assets/infoblox-logo-black.svg" alt="LOGO">
+            </div>
+            <div class="row justify-content-center login-heading">
+                <div class="col-auto">NIOS BloxConnect</div>
+            </div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="row justify-content-center">
+                    <div [ngClass]="login_failed || authenticating? 'col' : 'col invisible'">
+                        <div class="row justify-content-center">
+                            <div *ngIf="login_failed;then auth_err_msg1 else auth_prog_msg1"></div>
+                            <ng-template #auth_err_msg1>
+                                <span  class="text-danger text-center" >
+                                    * Authentication Failed *
+                                </span>
+                            </ng-template>
+                            <ng-template #auth_prog_msg1>
+                                <span class="text-primary text-center">
+                                    Authenticating
+                                </span>
+                            </ng-template>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div *ngIf="login_failed;then auth_err_msg2 else auth_prog_msg2"></div>
+                            <ng-template #auth_err_msg2>
+                                <span  class="text-danger text-center" >
+                                    Incorrect Username or Password
+                                </span>
+                            </ng-template>
+                            <ng-template #auth_prog_msg2>
+                                <span class="text-primary text-center">
+                                    Please wait
+                                </span>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center login-input">
+                    <input type="text" formControlName="username" required="required">
+                    <span>Username</span>
+                </div>
+                <div class="row justify-content-center login-input">
+                    <input type="password" formControlName="password" required="required">
+                    <span>Password</span>
+                </div>
+                <div class="row justify-content-center">
+                    <span [ngClass]="loginForm.invalid && login_failed?'text-center text-danger':'invisible'">
+                        *username or password cannot be empty*
+                    </span>
+                    <button class="btn btn-primary btn-login" type="submit" [disabled]="authenticating">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

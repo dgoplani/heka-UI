@@ -1,0 +1,55 @@
+<app-ui-notify-plane [node_list]="node_list"></app-ui-notify-plane>
+
+<div class="modal" tabindex="-1" id="logoutModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header py-2 px-3">
+                <span class="modal-title fs-4">Confirm Logout!</span>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                    <fa-icon [icon]="['fas','xmark']" size="2x"></fa-icon>
+                </button>
+            </div>
+            <div class="modal-body py-4 px-3">
+                <div class="row align-items-center justify-content-left">
+                    <div class="col-auto">
+                        <fa-icon [icon]="['fas','circle-exclamation']" size="3x"></fa-icon>
+                    </div>
+                    <div class="col">
+                        <span class="fs-5"> Are you sure you want to logout?</span>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer py-2 px-3 w-100">
+                <button type="button" class="btn btn-primary w-25" data-bs-dismiss="modal" (click)="logout()">Yes</button>
+                <button type="button" class="btn btn-secondary w-25" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-0 h-100">
+    <div class="row align-items-center px-0 mx-0 h-100 w-100">
+        <div class="col-auto me-auto">
+            <span class="fs-4">NIOS BloxConnect</span>
+        </div>
+        <div class="col-auto float-end" style="font-weight: 600; color: dimgray;">
+                <fa-icon [icon]="['fas','user']"></fa-icon>
+                <span style="padding-left: 5px;">{{username}}</span>
+        </div>
+        <div class="col-auto float-end">
+            <button class="btn-notification-bell" type="button" role="button" (click)="openNotifyPlane()">
+                <fa-icon [icon]="['fas', 'bell']" transform="rotate-20" size="2x"></fa-icon>
+            </button>
+        </div>
+        <div class="col-auto float-end">
+            <button class="btn btn-dark" type="button" role="button" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <span class="d-none d-md-inline">Logout </span><fa-icon [icon]="['fas', 'right-from-bracket']"></fa-icon>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- <fa-layers-text content="5" style="color: red;" transform="shrink-5"></fa-layers-text> -->

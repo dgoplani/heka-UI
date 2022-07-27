@@ -1,0 +1,21 @@
+<div class="container-fluid topcss" >
+    <ng-template *ngIf="isLoading();then loadingui else ui"></ng-template>
+    <ng-template #loadingui>
+        <app-loading [size]=30 [head]="loading_title"></app-loading>
+    </ng-template>
+    <ng-template #ui>
+        <div class="row">
+            <div class="col-auto uinavcss bg-dark">
+                <app-navbar [grid_name]="grid_info.grid_name" [nios_version]="grid_info.nios_version"></app-navbar>
+            </div>
+            <div class="col-auto uicss">
+                <div class="row uiheadcss">
+                    <app-ui-header class="px-0" [node_list]="node_list"></app-ui-header>
+                </div>
+                <div class="row align-items-start uibodycss">
+                    <router-outlet class="px-0"></router-outlet>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

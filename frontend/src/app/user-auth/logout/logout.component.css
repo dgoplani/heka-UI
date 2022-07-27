@@ -1,0 +1,47 @@
+.outer-body {
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../../../assets/data-bg-min.jpg');
+    background-size: cover;
+    overflow: auto;
+}
+
+.outer-body > .row {
+    height: 100%;
+}
+
+.logout-container {
+    margin: 0;
+    padding: 0 10px; 
+    min-height: 480px;
+    min-width: 360px;
+    width: 25vw;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 5px 5px 3px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    border-bottom: 1px solid gray;
+}
+
+.logo > img {
+    width: 50%;
+}
+
+.logout-heading > div {
+    font-size: 2.75em;
+    margin-top: 25px;
+}
+
+.logout-container > .row,
+.logout-container > form > .row {
+    margin: 15px auto;
+}
+
+button {
+    margin-top: 15px;
+    width: 65%;
+    font-size: 1.75em;
+    border-radius: 5px;
+}

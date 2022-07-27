@@ -1,0 +1,116 @@
+div.blank-notification-plane {
+    margin: 0;
+    padding: 0;
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* div.notification-plane {
+    margin: 5px;
+    padding: 0;
+    border-radius: 5px;
+    z-index: 2000;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 620px;
+    height: calc(100vh - 10px);
+    overflow-y: auto;
+    overflow-x: hidden;
+} */
+
+div.notification-alerts-plane {
+    margin: 5px;
+    padding: 0;
+    z-index: 101;
+    position: absolute;
+    top: 42px;
+    right: 0;
+    width: 250px;
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.notification-history-plane {
+    margin: 5px;
+    padding: 0;
+    border-radius: 5px;
+    z-index: 101;
+    position: absolute;
+    top: 42px;
+    right: 0;
+    width: 270px;
+    height: calc(100vh - 52px);
+    overflow: hidden;
+}
+
+div.notification-history-plane > div.n-header {
+    vertical-align: middle;
+    text-align: center;
+    color: whitesmoke;
+    margin: 5px auto;
+    overflow: hidden;
+    height: 25px;
+}
+
+div.notification-history-plane > div.n-body {
+    height: calc(100vh - 52px - 50px);
+    overflow: auto;
+}
+
+div.notification-history-plane > div.n-footer {
+    height: 25px;
+    overflow: hidden;
+}
+
+div.notification-history-plane > div.n-footer > button {
+    height: 25px;
+    vertical-align: middle;
+}
+
+ /* Hide scrollbar for Chrome, Safari and Opera */
+ .notification-history-plane > div.n-body::-webkit-scrollbar,
+ .notification-alerts-plane::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .notification-history-plane > div.n-body,
+  .notification-alerts-plane {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  } 
+
+
+
+div.notification {
+    color: white;
+}
+
+/* div.notification > div.col {
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+div.notification-header {
+    border-bottom: 1px solid rgba(255,255,255, 0.2);
+    margin-bottom: 5px;
+}
+
+div.notification-footer {
+    border-top: 1px solid rgba(255,255,255, 0.2);
+    margin-top: 5px;
+} */
+
+/* button.btn-clear-notification {
+    color: white;
+    border: none;
+    background-color: transparent;
+} */

@@ -1,0 +1,51 @@
+<div class="container-fluid p-0">
+    <div class="row align-items-center justify-content-center">
+        <a routerLink="/">
+            <img class="img-fluid" src="assets/infoblox-logo-white.svg" alt="LOGO">
+        </a>
+    </div>
+    <div class="row align-items-center justify-content-between grid-info">
+        <div class="col-12 title">
+            GRID NAME
+        </div>
+        <div class="col-12 value">
+            "{{grid_name}}"
+        </div>
+    </div>
+    <div class="row align-items-center justify-content-center grid-info">
+        <div class="col-12 title">
+            NIOS VERSION
+        </div>
+        <div class="col-12 value">
+            "{{nios_version}}"
+        </div>
+    </div>
+    <div class="row align-items-center justify-content-center">
+        <ul class="nav-group">
+            <li [ngClass]="checkRoute('/ui/hotfix')? 'nav-item active': 'nav-item'">
+                <a class="btn" type="button" role="button" routerLink="/ui/hotfix">
+                    <fa-icon [icon]="['fas', 'screwdriver-wrench']"></fa-icon>
+                    Hotfix Information
+                </a>
+            </li>
+            <li [ngClass]="checkRoute('/ui/xyz')? 'nav-item active': 'nav-item'">
+                <a class="btn" type="button" role="button">
+                    <fa-icon [icon]="['fas', 'screwdriver-wrench']"></fa-icon>
+                    Test Tab 1
+                </a>
+            </li>
+            <li [ngClass]="checkRoute('/ui/abc')? 'nav-item active': 'nav-item'">
+                <a class="btn" type="button" role="button">
+                    <fa-icon [icon]="['fas', 'screwdriver-wrench']"></fa-icon>
+                    Test Tab 2
+                </a>
+            </li>
+            <li [ngClass]="checkRoute('/ui/pqr')? 'nav-item active': 'nav-item'">
+                <a class="btn" type="button" role="button">
+                    <fa-icon [icon]="['fas', 'screwdriver-wrench']"></fa-icon>
+                    Test Tab 3
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

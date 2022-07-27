@@ -1,0 +1,150 @@
+<div class="modalWrapper" [style.z-index]="z_index" *ngIf="isOpen">
+    <div class="modalContent">
+        <div class="modalHeader">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-11">
+                        <span class="modalHeader-text">Hotfix Details</span>
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-modal-close" (click)="closeModal()">
+                            <fa-icon [icon]="['fas','xmark']" size="2x"></fa-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modalBody">
+            <div class="container-fluid">
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Name</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ hf.name }}</div>
+                        <div class="row sha-text">SHA256: {{ (hf.sha256 != '')? hf.sha256 : 'Not Avaialable' }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Revert</div>
+                    <div class="col-md-10 col-8">
+                        <ng-template *ngIf="((hf.revert | json) == '{}' || hf.revert.name == ''); then revertInfoNotAvailable else revertInfoAvailable"></ng-template>
+                        <ng-template #revertInfoAvailable>
+                            <div class="row">{{ hf.revert.name }}</div>
+                            <div class="row sha-text">SHA256: {{ (hf.revert.sha256 != '')? hf.sha256 : 'Not Avaialable' }}</div>
+                        </ng-template>
+                        <ng-template #revertInfoNotAvailable>
+                            <div class="row">Not Avaialable</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Release Date</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ hf.released | date:'MMMM d, yyyy hh:mm:ss a' }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Type</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ hf.type }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Summary</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ hf.summary }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Impacted Area(s)</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ (hf.impactedArea.length > 0)? hf.impactedArea.join(', ') : 'Not Available' }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Action Required</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row">{{ getRequiredActionString(hf.requiredActions) }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Contains</div>
+                    <div class="col-md-10 col-8">
+                        <ng-template *ngIf="((hf.fixes.BUGFIX.length > 0) || (hf.fixes.CVE.length > 0) || (hf.fixes.SECURITY.length > 0)); then fixSummary else generalSummary"></ng-template>
+                        <ng-template #fixSummary>
+                            <div class="row section-title" *ngIf="(hf.fixes.BUGFIX.length > 0)">
+                                Bug Fixes
+                            </div>
+                            <div class="row" *ngIf="(hf.fixes.BUGFIX.length > 0)">
+                                <ul style="list-style: none;">
+                                    <li *ngFor="let bgf of hf.fixes.BUGFIX">
+                                        <fa-icon [icon]="['fas', 'check-square']"></fa-icon>
+                                        {{ bgf.summary }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="row section-title" *ngIf="(hf.fixes.CVE.length > 0)">
+                                CVE Fixes
+                            </div>
+                            <div class="row" *ngIf="(hf.fixes.CVE.length > 0)">
+                                <ul style="list-style: none;">
+                                    <li *ngFor="let cvef of hf.fixes.CVE">
+                                        <fa-icon [icon]="['fas', 'check-square']"></fa-icon> 
+                                        <a [href]="cvef.ref" target="_blank">{{ cvef.id }}</a>: {{ cvef.summary }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="row section-title" *ngIf="(hf.fixes.SECURITY.length > 0)">
+                                Security Fixes
+                            </div>
+                            <div class="row" *ngIf="(hf.fixes.SECURITY.length > 0)">
+                                <ul style="list-style: none;">
+                                    <li *ngFor="let secf of hf.fixes.SECURITY">
+                                        <fa-icon [icon]="['fas', 'check-square']"></fa-icon>
+                                        {{ secf.summary }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </ng-template>
+                        <ng-template #generalSummary>
+                            <div class="row">General Enhancements</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">References</div>
+                    <div class="col-md-10 col-8">
+                        <ng-template *ngIf="(hf.references.length > 0); then refAvailable else refNotAvailable"></ng-template>
+                        <ng-template #refAvailable>
+                            <div class="row" *ngFor="let ref of hf.references">
+                                <span class="px-0"><a [href]="ref.link" target="_blank">{{ ref.type }}</a></span>
+                            </div>
+                        </ng-template>
+                        <ng-template #refNotAvailable>
+                            <div class="row">Not Avaialable</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start">
+                    <div class="col-md-2 col-4 section-title">Incompatible</div>
+                    <div class="col-md-10 col-8">
+                        <ng-template *ngIf="(hf.incompatible.length > 0); then incompatibleAvailable else incompatibleNotAvailable"></ng-template>
+                        <ng-template #incompatibleAvailable>
+                            <div class="row" *ngFor="let ic of hf.incompatible">{{ic}}</div>
+                        </ng-template>
+                        <ng-template #incompatibleNotAvailable>
+                            <div class="row">Not Available</div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="row align-items-start justify-content-start" *ngIf="nodes != undefined">
+                    <div class="col-md-2 col-4 section-title">Applicable Nodes</div>
+                    <div class="col-md-10 col-8">
+                        <div class="row" *ngFor="let n of nodes">
+                            {{n.hostname}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

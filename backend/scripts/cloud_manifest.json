@@ -1,0 +1,420 @@
+{
+  "type": "NiosHotfixManifest",
+  "metadata": {
+    "version": 1,
+    "generated": "2022-05-10T01:31:05Z"
+  },
+  "data": [
+    {
+      "name": "Hotfix-NIOS_8.5.4-419474_J85206-35722b78709a9d45e8f0a364b6361fa5-Mon-May-30-00-24-54-2022.bin",
+      "sha256": "df930cd2fdaf43f5b4c5522ce4c10bb7d44246ab4f0398dabe07c00440c301f7",
+      "revert": {
+        "name": "Hotfix-NIOS_8.5.4-419474_J85206_revert-8492c1876e4d039646ee28d871f1fffc-Mon-May-30-00-28-38-2022.bin",
+        "sha256": "b15477a418815a5b79cdf91602e0f902ab3783c9e41f99bdb8dc9c20116062d8"
+      },
+      "ticketId": "NIOS-85206",
+      "released": "2022-06-03T11:43:00Z",
+      "compatibleReleases": [
+        "8.5.4"
+      ],
+      "type": "Generic",
+      "compatibleNode": "MEMBER",
+      "summary": "NIOSSPT-11379 - 00299221 - GAP INC - High CPU utilization on CP-V2200 running on Azure Platform",
+      "impactedArea": [
+        "DTC",
+        "DNS"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "RECOMMENDED",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "No",
+        "serviceRestart": [
+          "DNS"
+        ]
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-8.5.1-397728_J77532-39582bccb0b6810e0156fbde243066d2-Wed-Jan-20-17-01-31-2021.bin",
+      "sha256": "",
+      "revert": {
+        "name": "Hotfix-8.5.1-397728_J77532_REVERT-f592250feec650f4ee455c9aa8d58b88-Wed-Jan-20-17-02-34-2021.bin",
+        "sha256": ""
+      },
+      "ticketId": "NIOS-77532",
+      "released": "2022-02-04T09:15:00Z",
+      "compatibleReleases": [
+        "8.5.1"
+      ],
+      "type": "Generic",
+      "compatibleNode": "MEMBER",
+      "summary": "NIOSSPT-11379 - 00299221 - GAP INC - High CPU utilization on CP-V2200 running on Azure Platform",
+      "impactedArea": [
+        "DTC",
+        "DNS"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "RECOMMENDED",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "No",
+        "serviceRestart": [
+          "DNS"
+        ]
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-8-6-1-NIOS-83311-APPLY-c70781968ab99e74fb74e8e4778448ea-Thu-Feb-10-05-54-46-2022.bin",
+      "sha256": "d0cf7ebef9a7a72f5ad50bedbbc6183c96124e016a90cb476887147af40a6780",
+      "revert": {
+        "name": "Hotfix-8-6-1-NIOS-83311-REVERT-2437840e8cbfa225ca6f9ac25bf20049-Thu-Feb-10-06-00-18-2022.bin",
+        "sha256": "e3d84c99049564a7e617311eaddf4d6a599faa4f799ff2f42418d80a4d8d9a22"
+      },
+      "ticketId": "NIOS-83311",
+      "released": "2022-02-23T08:19:00Z",
+      "compatibleReleases": [
+        "8.6.1"
+      ],
+      "type": "Generic",
+      "compatibleNode": "MASTER",
+      "summary": "Azure Cloud vDiscovery stopped working with error message",
+      "impactedArea": [
+        "vDiscovery"
+      ],
+      "fixes": {
+        "BUGFIX": [
+          {
+            "id": "NIOS-83729",
+            "summary": "Azure Cloud vDiscovery stopped working with error message - token expiration"
+          },
+          {
+            "id": "NIOS-83257",
+            "summary": "Azure Cloud vDiscovery stopped working with error message - special char issue"
+          }
+        ],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "IMPORTANT",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "Yes",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-NIOS-8.5.4-419474-J80288-e129825e6bb74f65bc14ebcadeee2342-Fri-May-20-06-48-04-2022.bin",
+      "sha256": "",
+      "revert": {
+        "name": "Hotfix-NIOS-8.5.4-419474-J80288_REVERT-c714fe05afbb2134af301148d30bfb8c-Fri-May-20-06-49-06-2022.bin",
+        "sha256": ""
+      },
+      "ticketId": "NIOS-85177",
+      "released": "2022-06-03T11:44:00Z",
+      "compatibleReleases": [
+        "8.5.4"
+      ],
+      "type": "Generic",
+      "compatibleNode": "MEMBER",
+      "summary": "SDN: ACI: The networks from ACI fabric aren't displayed in IPAM",
+      "impactedArea": [
+        "IPAM",
+        "NetworkInsight"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "RECOMMENDED",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "Yes",
+        "productRestart": "No",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-8.5.4-419474-NIOS-84804-APPLY-48e97e635c85e6a04cbbd625a6601bf9-Wed-May-4-08-46-57-2022.bin",
+      "sha256": "2817e525fb43def9b3cd22f642b2dabf1e8a643eaa306757b99deaee92ac9740",
+      "revert": {
+        "name": "Hotfix-8.5.4-419474-NIOS-84804-REVERT-42a8963f294e5f1d63f19dc8e8602e93-Wed-May-4-08-47-27-2022.bin",
+        "sha256": "0dc6d9d4260e4daf6cf2a0a43c8c7b732efe062ad06f77e3326e6c58f285ca0b"
+      },
+      "ticketId": "NIOS-84804",
+      "released": "2022-05-09T08:42:00Z",
+      "compatibleReleases": [
+        "8.5.4"
+      ],
+      "type": "Generic",
+      "compatibleNode": "ALL",
+      "summary": "Security scan reports vulnerabilities because SHA1 algorithm is being used by NIOS",
+      "impactedArea": [],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "IMPORTANT",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "Yes",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-NIOS-81757-APPLY-8.4.8-8.5.2-8.5.3-8.5.4-57d17aeff8458f99b101638103328aec-Thu-Dec-9-06-13-48-2021.bin",
+      "sha256": "1301bab3a3015f740e9ab390bb051abfae3bc1d045e880f2b5bbfa838d59fd3d",
+      "revert": {
+        "name": "Hotfix-NIOS-81757-REVERT-8.4.8-8.5.2-8.5.3-8.5.4-50c0a975f0540dbf1061cd50f8623d98-Thu-Dec-9-06-14-50-2021.bin",
+        "sha256": "616db9d189296d68306a673737e47e11e9aaa32756fe8e56456372ac5616ffcf"
+      },
+      "ticketId": "NIOS-81757",
+      "released": "2021-12-15T10:58:00Z",
+      "compatibleReleases": [
+        "8.4.8",
+        "8.5.2",
+        "8.5.3",
+        "8.5.4"
+      ],
+      "type": "Generic",
+      "compatibleNode": "ALL",
+      "summary": "NIOS will require restart after overwrite NIOS license on NIOS 8.5.x",
+      "impactedArea": [],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "IMPORTANT",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "No",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-NIOS-84354-APPLY-8.4.8-8.5.2-8.5.3-8.5.4-8.6.1-737fa6f5da3f04576e63884e4f29dc9e-Wed-Apr-27-22-15-39-2022.bin",
+      "sha256": "f40d857b10b784bb9460f8bf6017e211122e7f5a13b682c252d64c02af964923",
+      "revert": {
+        "name": "Hotfix-NIOS-84354-REVERT-8.4.8-8.5.2-8.5.3-8.5.4-8.6.1-1d00192dbc72f380626fa7771a73cce7-Wed-Apr-27-22-16-18-2022.bin",
+        "sha256": "7065ee6fca0fd970cd06a57131499c6fa178506ac908924fd5d417046c4b2c06"
+      },
+      "ticketId": "NIOS-84354",
+      "released": "2022-09-11T11:53:00Z",
+      "compatibleReleases": [
+        "8.4.8",
+        "8.5.2",
+        "8.5.3",
+        "8.5.4",
+        "8.6.1"
+      ],
+      "type": "Generic",
+      "compatibleNode": "ALL",
+      "summary": "NIOS will require restart after overwrite NIOS license on NIOS 8.4.8, 8,5.2/3/4, and 8.6.1",
+      "impactedArea": [],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "IMPORTANT",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "No",
+        "serviceRestart": []
+      },
+      "incompatible": [
+        "Hotfix-NIOS-82790-APPLY-8.4.8-8.5.2-8.5.3-8.5.4-8.6.1-f8cff849b3b6e007bda1f22439618d93-Wed-Feb-2-05-15-52-2022.bin"
+      ]
+    },
+    {
+      "name": "Hotfix-NIOS_8.6.0_412613_J81386-54ff3bd1e93bbe90561709fa7ba848cc-Fri-Nov-12-14-07-57-2021.bin",
+      "sha256": "eb4912fe8831124c4c0752462e62f07793f4c024b4ccb4e0184e7f34b04c98ef",
+      "revert": {
+        "name": "Hotfix-NIOS_8.6.0_412613_J81386_revert-5da2a2aa8cdbaad08748b3b6641b2f14-Fri-Nov-12-15-53-34-2021.bin",
+        "sha256": "6d7e7a302782640a8a6d19e29842de7f7d0b0f57915a0a3fbf795c7b57340f82"
+      },
+      "ticketId": "NIOS-81386",
+      "released": "2021-09-18T08:59:00Z",
+      "compatibleReleases": [
+        "8.6.0"
+      ],
+      "type": "Generic",
+      "compatibleNode": "ALL",
+      "summary": "SAML login issue with Azure IDP",
+      "impactedArea": [
+        "SAML"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "OPTIONAL",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "Yes",
+        "productRestart": "No",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-8-5-2-NIOS-84809-APPLY-4d07cfb4f0d7e9a2a4f16f58f8dcc31c-Wed-Apr-27-10-14-35-2022.bin",
+      "sha256": "8f65848f0f9b547c232e56be3cb91ec54e5fef4f5733fdef36fb0e7abf0e69de",
+      "revert": {
+        "name": "Hotfix-8-5-2-NIOS-84809-REVERT-d564743f6bff5b7a9efb458e6752d80d-Wed-Apr-27-03-58-34-2022.bin",
+        "sha256": "fbc45551482609c99c1b37e1a610b441c316966e5feec2832a328713961f7696"
+      },
+      "ticketId": "NIOS-84809",
+      "released": "2022-05-09T08:37:00Z",
+      "compatibleReleases": [
+        "8.5.2"
+      ],
+      "type": "Generic",
+      "compatibleNode": "ALL",
+      "summary": "While collecting Elastic IPs from AWS, the customer’s environment had a CIDR in 'public_ip' response",
+      "impactedArea": [
+        "CloudDiscovery"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "OPTIONAL",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "Yes",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-NIOS_8.5.1-397728_J84045_APPLY-99525c4adfd2d1f649c3a7de134f91bc-Tue-Mar-8-02-36-51-2022.bin",
+      "sha256": "69154d19aebc8b337351a3582ecd5b49da3b94f7e9a629b39b7c8a6878f60d9c",
+      "revert": {
+        "name": "Hotfix-NIOS_8.5.1-397728_J84045_REVERT-55e6e22600dc04fdff919d7e63135bbe-Tue-Mar-8-02-37-53-2022.bin",
+        "sha256": "7a0b1b60a168525a492231ffb245fb0b11f662c675e21430476986fe6bc9045f"
+      },
+      "ticketId": "NIOS-84045",
+      "released": "2022-03-24T12:07:00Z",
+      "compatibleReleases": [
+        "8.5.1"
+      ],
+      "type": "Generic",
+      "compatibleNode": "MEMBER",
+      "summary": "Health monitor not working as expected",
+      "impactedArea": [
+        "DNS"
+      ],
+      "fixes": {
+        "BUGFIX": [],
+        "CVE": [],
+        "SECURITY": []
+      },
+      "severity": "OPTIONAL",
+      "references": [],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "Yes",
+        "serviceRestart": []
+      },
+      "incompatible": []
+    },
+    {
+      "name": "Hotfix-8-4-8-NIOS-84139-APPLY-293d23f7800b2bdb7c21d1bb76e5518f-Mon-Mar-14-09-28-19-2022.bin",
+      "sha256": "e1877b6a9c7b8bd195671b5493859b3b3a63ac25f1209aa2f8557884e97ea717",
+      "revert": {
+        "name": "Hotfix-8-4-8-NIOS-84139-REVERT-0fc9dbe17b75665971e13d989ce57f22-Mon-Mar-14-09-29-20-2022.bin",
+        "sha256": "81e35c5f767fc98016bb0a4cc73de1c1dd80e419289ce9c986a59d099f81cdb9"
+      },
+      "ticketId": "NIOS-84139",
+      "released": "2022-03-21T02:10:00Z",
+      "compatibleReleases": [
+        "NIOS-8.4.8"
+      ],
+      "type": "Consolidated",
+      "compatibleNode": "ALL",
+      "summary": "This Hotfix resolves the issues seen in NIOS-70979, NIOS-77270, NIOS-77291, NIOS-71659, CVE-2021-25215, CVE-2021-25214, CVE-2021-25220.",
+      "impactedArea": [
+        "DNS"
+      ],
+      "fixes": {
+        "BUGFIX": [
+          {
+            "id": "NIOS-70979",
+            "summary": "DTC initialization failure and fatal error when stop and start the DNS service"
+          },
+          {
+            "id": "NIOS-77270",
+            "summary": "Restarting members due to 100% swap memory"
+          },
+          {
+            "id": "NIOS-77291",
+            "summary": "Intermittent DNS timeouts and delays in query resolution"
+          },
+          {
+            "id": "NIOS-71659",
+            "summary": "named process crashes resulting in huge core files"
+          }
+        ],
+        "CVE": [
+          {
+            "id": "CVE-2021-25215",
+            "summary": "An assertion check can fail while answering queries for DNAME records that require the DNAME to be processed to resolve itself",
+            "ref": "https://kb.isc.org/v1/docs/cve-2021-25215"
+          },
+          {
+            "id": "CVE-2021-25214",
+            "summary": "A broken inbound incremental zone update (IXFR) can cause named to terminate unexpectedly",
+            "ref": "https://kb.isc.org/v1/docs/cve-2021-25214"
+          },
+          {
+            "id": "CVE-2021-25220",
+            "summary": "DNS forwarders - cache poisoning vulnerability",
+            "ref": "https://kb.isc.org/v1/docs/cve-2021-25220"
+          }
+        ],
+        "SECURITY": []
+      },
+      "severity": "IMPORTANT",
+      "references": [
+        {
+          "type": "kb Article",
+          "link": "https://kb.isc.org/docs/aa-00861"
+        }
+      ],
+      "requiredActions": {
+        "systemReboot": "No",
+        "productRestart": "No",
+        "serviceRestart": [
+          "DNS"
+        ]
+      },
+      "incompatible": []
+    }
+  ]
+}

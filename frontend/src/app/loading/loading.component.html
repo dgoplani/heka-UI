@@ -1,0 +1,13 @@
+<div class="full-container">
+    <div class="loader-container" style="--s:{{size}}">
+        <div class="loader-head" style="--s:{{size}}">
+            {{head}}
+        </div>
+        <div class="loader-text" style="--s:{{size}}">
+            Loading
+        </div>
+        <div class="loader" style="--s:{{size}}">
+            <span style="--i:{{idx}};--s:{{size}}" *ngFor="let d of [].constructor(size); let idx = index;"></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+#!/usr/bin/python
+
+import re
+import os
+import json
+import infoblox.common.util as cu
+import infoblox.common.ilog as ilog
+
+# regEx to find ibap config
+pattern = '(<Location\s+/ibap>.*?</Location>|<Location\s+"/ibap">.*?</Location>)'
+# config file paths
+file_path = "/usr/conf/tmpl-one-httpd.conf"
+bkp_file_path = "/usr/conf/tmpl-one-httpd.conf.bkp"
+new_file_path = "/usr/conf/new-tmpl-one-httpd.conf"
+
+def inject_config():
+    entries = []
+    new_contents = ''
+    # Checking config file existence
+    if not os.path.exists(file_path):
+        ilog.log("File doesn't exists: ", file_path)
+        return ('FAILURE', "File doesn't exists: %s" % file_path)
+    # Reading file to generate new config
+    with open(file_path, "r") as cf:
+        file_contents = cf.read()
+        # get all entries for ibap configuration to replicate for bloxconnect
+        entries = re.findall(pattern, file_contents , re.DOTALL|re.MULTILINE)
+        new_contents = file_contents
+    if len(entries) != 0:
+        for e in entries:
+            # generate the identical config for bloxconnect as ibap
+            bc_e = re.sub("ibap", "bloxconnect", e)
+            bc_e = re.sub("ProxyPass .*", "ProxyPass http://localhost:26751/", bc_e)
+            bc_e = re.sub("ProxyPassReverse .*", "ProxyPassReverse http://localhost:26751/", bc_e)
+            # inject the generated config
+            new_contents = new_contents.replace(e, e+"\n\n    "+bc_e)
+        # change filesystem to read-write
+        mount_rw = cu.iexec('mount', '-o', 'remount', 'rw', '/')
+        if mount_rw != 0:
+            ilog.log("mount rw not success")
+            return('FAILURE', 'mount rw not success')
+        # write new config file
+        with open(new_file_path, "w") as nf:
+            nf.write(new_contents)
+        # Taking backup of original config and replacing with new config
+        os.rename(file_path, bkp_file_path)
+        os.rename(new_file_path, file_path)
+        # change filesystem to read-only
+        mount_ro = cu.iexec('mount', '-o', 'remount', 'ro', '/')
+        if mount_ro != 0:
+            ilog.log("mount ro not success")
+            return('FAILURE', 'mount ro not success')
+        # Killing httpd process, it will restart with new config
+        kill_httpd = cu.iexec('pkill', 'httpd')
+        if kill_httpd != 0:
+            ilog.log("Failed to restart httpd process post config changes");
+            return('FAILURE', 'Failed to restart httpd process post config changes')
+        ilog.log("Successfully injected the bloxconnect redirect config into httpd config")
+    else:
+        ilog.log("No ibap config found in httpd to replicate for bloxconnect")
+        return('FAILURE', 'No ibap config found in httpd to replicate for bloxconnect')
+    return ('SUCCESS', 'none')
+
+def dump_json(data):
+    print(json.dumps(data))
+
+if __name__ == "__main__":
+    try:
+        (status,err) = inject_config()
+        dump_json({'status': status, 'error': err})
+    except Exception as e:
+        ilog.log('Error occurred while injecting bloxconnect httpd configuration : %s' % e)
+        dump_json({'status': 'FAILURE', 'error':str(e)})

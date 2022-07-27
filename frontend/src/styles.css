@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+    font-size: small;
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border: transparent;
+}

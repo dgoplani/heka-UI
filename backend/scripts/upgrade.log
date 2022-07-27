@@ -1,0 +1,29 @@
+[2018/08/27 02:50:50] Upgraded to: 8.1.8-365387
+[2018/10/18 09:29:22 UTC] Downgraded to: 7.3.11-348103
+[2018/10/30 00:54:14] Upgraded to: 7.3.16-357817
+[2018/11/16 01:57:28] Upgraded to: 8.1.8-365387
+[2019/02/07 10:29:45 UTC] Downgraded to: 8.1.7-364684
+[2019/03/04 17:56:55] Upgraded to: 8.2.7-372540
+[2019/04/19 09:28:08] Upgraded to: 8.3.1-374063
+[2019/04/22 02:43:34 UTC] Downgraded to: 8.2.7-372540
+[2019/11/18 10:57:05] Upgraded to: 8.2.9-383779
+[2019/12/23 07:02:26] Upgraded to: 8.4.4-386831
+[2020/01/28 01:49:54] Upgraded to: 8.4.6-393507
+[2020/07/02 10:58:40 UTC] Downgraded to: 7.3.16-357817
+[2020/07/03 17:32:34] Upgraded to: 8.4.7-395215
+[2020/07/07 20:03:03] Reverted to: 7.3.16-357817
+[2020/07/08 19:17:37] Upgraded to: 8.4.7-395215
+[2020/07/08 20:26:50] Hotfix Hotfix-NIOS-74467-8.4.7-395215_Apply-6308a669a110f8dfb778896f85dc1409-Thu-May-14-09-03-33-2020.bin applied successfully
+[2020/11/02 01:59:21 UTC] Downgraded to: 7.3.16-357817
+[2020/11/04 16:16:10] Upgraded to: 8.4.7-395215
+[2020/12/04 05:28:25 UTC] Downgraded to: 8.4.4-386831
+[2020/12/11 17:20:04] Upgraded to: 8.4.8-405274
+[2021/02/03 07:20:38 UTC] Downgraded to: 7.3.10-345050
+[2020/07/08 10:26:50] Hotfix Hotfix-NIOS-74467-8.4.6-395215_Apply-6308a669a110f8dfb778896f85dc1409-Thu-May-14-09-03-33-2020.bin applied successfully
+[2020/07/08 10:26:50] Hotfix Hotfix-NIOS-74467-6.4.6-395215_Apply-6308a669a110f8dfb778896f85dc1409-Thu-May-14-09-03-33-2020.bin applied successfully
+[2020/07/08 10:26:50] Hotfix Hotfix-NIOS_8.5.4-419474_J85206-35722b78709a9d45e8f0a364b6361fa5-Mon-May-30-00-24-54-2022.bin applied successfully
+[2020/07/08 10:26:50] Hotfix Hotfix-NIOS-74467-7.4.6-395215_Apply-6308a669a110f8dfb778896f85dc1409-Thu-May-14-09-03-33-2020.bin applied successfully
+[2021/02/03 11:41:52] Upgraded to: 8.2.9-383779
+[2021/02/03 12:13:20] Upgraded to: 8.4.8-405274
+[2021/04/23 16:52:24] Upgraded to: 8.5.2-409296
+[2021/04/28 10:58:06] Reverted to: 8.4.8-405274

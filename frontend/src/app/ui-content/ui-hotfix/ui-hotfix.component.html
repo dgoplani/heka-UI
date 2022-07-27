@@ -1,0 +1,201 @@
+<app-ui-modal #hotfixModal></app-ui-modal>
+
+<div class="col wrapper">
+    <div class="h-100 d-flex flex-column">
+        <div class="row align-items-start justify-content-start">
+            <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-12 col-12">
+                <div class="dropdown node-select">
+                    <button class="btn" [ngClass]="{'disabled': isLoading()}" type="button" role="button" id="nodeListDropdown" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                        <span style="float:left;" class="node-name-selected" *ngIf="!node_loading">
+                            {{selectedNode.role}}: {{selectedNode.hostname}}
+                        </span>
+                        <span style="float:left;" *ngIf="node_loading">Loading...</span>
+                        <span style="float:right;"><fa-icon [icon]="['fas', 'caret-down']"></fa-icon></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="nodeListDropdown" #nodeListMenu>
+                        <li>
+                            <input type="text" class="form-control" placeholder="Type to Search..." #searchNode aria-label="searchNode" aria-describedby="searchNode" (input)="findNode($event)">
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <ng-container *ngFor="let n of listNodes">
+                            <li>
+                                <a class="dropdown-item node-name-dropdown" (click)="selectNode(n)">
+                                    {{n.role}}: {{n.hostname}}
+                                </a>
+                            </li>
+                        </ng-container>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <ng-template *ngIf="isLoading();then loading_hotfix else hotfix;"></ng-template>
+        <ng-template #loading_hotfix>
+            <div class="row loading">
+                <app-loading [size]=20 [head]="loading_title"></app-loading>
+            </div>
+        </ng-template>
+        <ng-template #hotfix>
+            <div class="row align-items-start justify-content-start">
+                <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-6 col-12">
+                    <table class="node-summary">
+                        <thead>
+                            <tr>
+                                <th colspan="2" scope="col" [ngClass]="selectedNodeData.status=='ONLINE' ? 'online': 'offline'">{{selectedNodeData.status}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">IP Address</th><td>{{selectedNodeData.ip}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">HA Pair</th><td>{{(selectedNodeData.ha_enable)? 'Yes' : 'No'}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Master Candidate</th><td>{{(selectedNodeData.master_candidate)? 'Yes' : 'No'}}</td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+                <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-6 col-12">
+                    <table class="hotfix-summary">
+                        <thead>
+                            <tr style="background: lightgrey;">
+                                <th scope="col">Hofixes</th><th>Available</th><th>Installed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Important</th>
+                                <td>{{hotfixSummary['IMPORTANT']['available']}}</td>
+                                <td>{{hotfixSummary['IMPORTANT']['installed']}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Recommended</th>
+                                <td>{{hotfixSummary['RECOMMENDED']['available']}}</td>
+                                <td>{{hotfixSummary['RECOMMENDED']['installed']}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Optional</th>
+                                <td>{{hotfixSummary['OPTIONAL']['available']}}</td>
+                                <td>{{hotfixSummary['OPTIONAL']['installed']}}</td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+            <div class="row align-items-center justify-content-start pt-4 mt-2">
+                <div class="col-md-auto col-4 order-md-first order-last px-1">
+                    <button class="btn btn-secondary btn-table-top" type="button" role="button" (click)="collapseAll()">
+                        Collapse All
+                    </button>
+                </div>
+                <div class="col-md col-sm-6 col-12 order-first px-0">
+                    <input type="text" class="form-control search-box w-100" placeholder="Type to Search..." #search aria-label="search" aria-describedby="search" (input)="onSearch($event)">
+                </div>
+                <div class="col-md col-sm-6 col-12 order-first">
+                    <span class="fs-6 result-table-top">
+                        <ng-container *ngIf="searchApplied && displayData.length != 0">
+                            {{displayData.length}} Result(s) Found
+                        </ng-container>
+                        <ng-container *ngIf="searchApplied && displayData.length == 0">
+                            No Result Found
+                        </ng-container>
+                    </span>
+                </div>
+                <div class="col-md-auto col-4 order-last px-0">
+                    <button class="btn btn-secondary btn-table-top" type="button" role="button" (click)="clearAll()" [disabled]="sortColumn=='' && filterApplied==false && searchApplied==false">
+                        Reset <fa-icon [icon]="['fas', 'arrow-rotate-right']" size="sm"></fa-icon>
+                    </button>
+                </div>
+                <div class="col-md-auto col-4 order-last px-0">
+                    <button [ngClass]="filterApplied ? 'btn btn-dark btn-table-top' : 'btn btn-secondary btn-table-top'" type="button" role="button" id="filterBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        Filter <fa-icon [icon]="['fas', 'filter']" size="sm"></fa-icon>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterBtn">
+                        <ng-container *ngFor="let fd of filterData | keyvalue">
+                            <li class="dropdown-header">
+                                <label for="{{displayColsMap[fd.key]}}">
+                                    {{displayColsMap[fd.key]}}
+                                </label>
+                            </li>
+                            <li class="dropdown-item" *ngFor="let d of fd.value | keyvalue">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" [checked]="d.value" id="{{fd.key}}_{{d.key}}" (change)="onFilterChange(fd.key, d.key, $event)">
+                                    <label class="form-check-label" for="{{fd.key}}_{{d.key}}">
+                                        {{d.key}}
+                                    </label>
+                                </div>
+                            </li>
+                        </ng-container>
+                    </ul>
+                </div>           
+            </div>
+        
+            <div class="row flex-grow-1 hf-table-wrapper">
+                <div class="col table-responsive px-0">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr class="m-0" style="border-top: 1px solid black; border-bottom: 2px solid black;">
+                                <th></th>
+                                <th *ngFor="let dc of displayCols" [ngClass]="(sortColumn==dc)? 'h-100 sort-col col-head' : 'h-100 col-head'" role="button" (click)="sortData(dc)">
+                                    <div class="row justify-content-between p-0 m-0">
+                                        <div class="col-auto p-0 d-inline">
+                                            {{displayColsMap[dc]}}
+                                        </div>
+                                        <div class="col-auto p-0 sort-arrow">
+                                            <fa-icon [icon]="(sortColumn==dc && sortOrder == 'dsc')? ['fas', 'arrow-up'] : ['fas', 'arrow-down']"></fa-icon>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let d of displayData; let i = index">
+                                <tr [ngClass]="d.show ? 'table-item table-active' : 'table-item'">
+                                    <td>
+                                        <button class="btn-plus-minus" type="button" role="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse'+d.idx" [attr.aria-controls]="'collapse'+d.idx" [attr.aria-expanded]="d.show" (click)="expand($event, i)">
+                                            <fa-icon [icon]="d.show? ['far', 'square-minus']: ['far', 'square-plus']" size="lg"></fa-icon>
+                                        </button>
+                                    </td>
+                                    <td [ngClass]="getColorClass(d.applyStatus, d.severity)">{{ d.applyStatus }}</td>
+                                    <td><button class="hotfix-name-btn" type="button" role="button" (click)="hotfixModal.openModal(d, listNodes)">{{ d.name }}</button></td>
+                                    <td>{{ d.severity }}</td>
+                                    <td>{{ d.type }}</td>
+                                    <td>{{ d.released | date:'dd-MM-yyyy, hh:mm:ss a' }}</td>
+                                    <td>{{ (d.impactedArea.length > 0)? d.impactedArea.join(', ') : '-' }}</td>
+                                    <td>{{ getRequiredActionString(d.requiredActions) }}</td>
+                                </tr>
+                                <tr [ngClass]="getColorClass(d.applyStatus, d.severity)">
+                                    <td colspan="8">
+                                        <div class="container-fluid mx-4 collapse" [id]="'collapse'+d.idx">
+                                            <div class="row justify-content-start">
+                                                <div class="col"><span style="font-weight: 600;">{{ d.name }}</span></div>
+                                            </div>
+                                            <div class="row justify-content-start">
+                                                <div class="col-1">Summary</div>
+                                                <div class="col">{{ d.summary }}</div>
+                                            </div>
+                                            <div class="row justify-content-start">
+                                                <div class="col-1">Contains</div>
+                                                <div class="col">{{ getFixesString(d.fixes) }}</div>
+                                            </div>
+                                            <div class="row justify-content-start">
+                                                <div class="col-1">Revert</div>
+                                                <div class="col">{{ ((d.revert | json) != '{}')? 'Available' : 'Not Available' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+
