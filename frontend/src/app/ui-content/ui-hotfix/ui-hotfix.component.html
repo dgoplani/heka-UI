@@ -168,7 +168,7 @@
                                     <td>{{ getRequiredActionString(d.requiredActions) }}</td>
                                 </tr>
                                 <tr [ngClass]="getColorClass(d.applyStatus, d.severity)">
-                                    <td colspan="8">
+                                    <td class="p-0" colspan="8">
                                         <div class="container-fluid mx-4 collapse" [id]="'collapse'+d.idx">
                                             <div class="row justify-content-start">
                                                 <div class="col"><span style="font-weight: 600;">{{ d.name }}</span></div>
