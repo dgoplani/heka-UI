@@ -102,16 +102,7 @@ func MakePostRequest(sec time.Duration, script string, args []string) (int, []by
 	return res.StatusCode, data, err
 }
 
-func TriggerControldScript() {
-	for {
-		collectHotfixData("--trigger")
-		wait := viper.GetDuration("hotfix.interval")
-		logger.Infoln("Collecing hotfix data from all nodes for every ", wait)
-		time.Sleep(wait)
-	}
-}
-
-func collectHotfixData(action string) {
+func CollectHotfixData(action string) {
 	// Call a python script hotfix_manifest
 	responseInfo := struct {
 		Code    int    `json:"code"`

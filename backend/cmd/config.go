@@ -18,6 +18,8 @@ const (
 	defaultServerAddress      = "127.0.0.1:26750"
 	defaultWapiVersion        = "v2.12"
 	defaultHotfixInterval     = 5 * time.Minute
+	defaultGridUuid           = ""
+	defaultNiosVersion        = ""
 )
 
 var (
@@ -32,4 +34,6 @@ var (
 	flagHealthAddress = flag.String("server.address", defaultServerAddress, "Address and port to bind the healthcheck listener to")
 	flagWapiVersion   = flag.String("wapi.version", defaultWapiVersion, "Wapi version to be used to make NIOS APi call")
 	flagPollInterval  = flag.Duration("hotfix.interval", defaultHotfixInterval, "sleep time untill that hotfix data will be collected")
+	flagGridUUid      = flag.String("grid_uuid", defaultGridUuid, "Wapi version to be used to make NIOS APi call")
+	flagNiosVersion   = flag.String("nios_version", defaultNiosVersion, "sleep time untill that hotfix data will be collected")
 )

@@ -1,0 +1,50 @@
+#!/usr/bin/python
+
+# This python script is used to get the system details. Based on
+# the output we will invoke heka_data, metrics_data and other resources.
+
+
+import infoblox.one.onedb as onedb
+import infoblox.one.util as ou
+import infoblox.common.ilog as ilog
+import os
+from infoblox.one.clusterd import is_node_active_master
+import json
+
+
+def get_system_details():
+    data = {}
+    version = ''
+    db = onedb.Db()
+    with db.begin(onedb.RO) as t:
+        grid = db.call('?one.cluster', {'cluster_oid': ou.get_my_cluster_id()}, factory = onedb.todict, single=True)
+        if grid:
+            data['grid_uuid'] = grid['uuid']
+        if os.path.exists('/infoblox/config'):
+            version = get_current_version('/infoblox/config')
+            version= version.strip('\n')
+            data['nios_version'] = version
+
+    return data
+
+def get_current_version(config_file):
+    curr_ver = ''
+    with open(config_file) as fd:
+        lines = fd.readlines()
+        for line in lines:
+            if 'EXTERNAL_VERSION' in line:
+                curr_ver = line.partition('=')[2]
+                break
+    return curr_ver
+
+
+def dump_json(data):
+    print json.dumps(data)
+
+if __name__ == '__main__':
+    try:
+        data = get_system_details()
+        dump_json(data)
+    except Exception, e:
+        ilog.log('Error occurred while handling system_status : %s' % e)
+        dump_json({'error':str(e)})
