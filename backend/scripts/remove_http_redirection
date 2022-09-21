@@ -44,15 +44,20 @@ def remove_config():
         if mount_ro != 0:
             ilog.log("mount ro not success")
             return('FAILURE', 'mount ro not success')
-        # Killing httpd process, it will restart with new config
-        kill_httpd = cu.iexec('pkill', 'httpd')
-        if kill_httpd != 0:
-            ilog.log("Failed to restart httpd process post config changes");
-            return('FAILURE', 'Failed to restart httpd process post config changes')
-        ilog.log("Successfully removed the bloxconnect redirect config from httpd config")
+        
+        # Check if httpd server is running
+        httpd_running = cu.iexec('pgrep', 'httpd')
+        if httpd_running == 0:
+            # Killing httpd process, it will restart with new config
+            kill_httpd = cu.iexec('pkill', 'httpd')
+            if kill_httpd != 0:
+                ilog.log("Failed to restart httpd process post config changes")
+                return('FAILURE', 'Failed to restart httpd process post config changes')
+        else:
+            ilog.log("httpd server not running, skipping restart")
     else:
         ilog.log("No bloxconnect config found in httpd to remove")
-        return('FAILURE', 'No bloxconnect config found in httpd to remove')
+    
     return ('SUCCESS', 'none')
 
 def dump_json(data):

@@ -7,27 +7,39 @@ import infoblox.common.util as cu
 import infoblox.common.ilog as ilog
 
 # regEx to find ibap config
-pattern = '(<Location\s+/ibap>.*?</Location>|<Location\s+"/ibap">.*?</Location>)'
+pattern_ibap = '(<Location\s+/ibap>.*?</Location>|<Location\s+"/ibap">.*?</Location>)'
+# regEx for finding the bloxconnect config
+pattern_bloxconnect = '(\n\n    <Location\s+"/bloxconnect">.*?</Location>|\n\n    <Location\s+/bloxconnect>.*?</Location>)'
 # config file paths
 file_path = "/usr/conf/tmpl-one-httpd.conf"
 bkp_file_path = "/usr/conf/tmpl-one-httpd.conf.bkp"
 new_file_path = "/usr/conf/new-tmpl-one-httpd.conf"
 
 def inject_config():
-    entries = []
+    entries_bloxconnect = []
+    entries_ibap = []
     new_contents = ''
-    # Checking config file existence
+
+    # Checking one-httpd template file existence
     if not os.path.exists(file_path):
         ilog.log("File doesn't exists: ", file_path)
         return ('FAILURE', "File doesn't exists: %s" % file_path)
-    # Reading file to generate new config
+    
+    # Reading one-httpd template file to generate new config
     with open(file_path, "r") as cf:
         file_contents = cf.read()
+        # get all entries for bloxconnect, if it exists
+        entries_bloxconnect = re.findall(pattern_bloxconnect, file_contents , re.DOTALL|re.MULTILINE)
         # get all entries for ibap configuration to replicate for bloxconnect
-        entries = re.findall(pattern, file_contents , re.DOTALL|re.MULTILINE)
+        entries_ibap = re.findall(pattern_ibap, file_contents , re.DOTALL|re.MULTILINE)
         new_contents = file_contents
-    if len(entries) != 0:
-        for e in entries:
+    
+    # Check if the configuration already exists
+    if len(entries_bloxconnect) != 0:
+        ilog.log("Bloxconnect configuration already present in one-httpd template file.")
+    # If configuration doesn't exists, inject the configuration
+    elif len(entries_ibap) != 0:
+        for e in entries_ibap:
             # generate the identical config for bloxconnect as ibap
             bc_e = re.sub("ibap", "bloxconnect", e)
             bc_e = re.sub("ProxyPass .*", "ProxyPass http://localhost:26751/", bc_e)
@@ -50,15 +62,21 @@ def inject_config():
         if mount_ro != 0:
             ilog.log("mount ro not success")
             return('FAILURE', 'mount ro not success')
+        ilog.log("Successfully injected the bloxconnect redirect config into httpd config")
+    else:
+        ilog.log("No ibap config found in one-httpd template to replicate for bloxconnect")
+        return('FAILURE', 'No ibap config found in httpd to replicate for bloxconnect')
+    
+    # Check if httpd server is running
+    httpd_running = cu.iexec('pgrep', 'httpd')
+    if httpd_running == 0:
         # Killing httpd process, it will restart with new config
         kill_httpd = cu.iexec('pkill', 'httpd')
         if kill_httpd != 0:
-            ilog.log("Failed to restart httpd process post config changes");
+            ilog.log("Failed to restart httpd process post config changes")
             return('FAILURE', 'Failed to restart httpd process post config changes')
-        ilog.log("Successfully injected the bloxconnect redirect config into httpd config")
     else:
-        ilog.log("No ibap config found in httpd to replicate for bloxconnect")
-        return('FAILURE', 'No ibap config found in httpd to replicate for bloxconnect')
+        ilog.log('httpd server not running, skipping restart')
     return ('SUCCESS', 'none')
 
 def dump_json(data):
