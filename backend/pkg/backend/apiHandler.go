@@ -32,7 +32,7 @@ type Grid struct {
 	Version     string `json:"version"`
 	NiosVersion string `json:"nios_version"`
 	GridName    string `json:"grid_name"`
-	GridHwid    string `json:"grid_hwid"`
+	GridUuid    string `json:"grid_uuid"`
 }
 type GridResp struct {
 	GridName string `json:"name"`
@@ -213,7 +213,8 @@ func ListNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func getNodeDetails(mem NiosMemberDetails) Node {
-
+	niosRole := viper.GetString("labels.nios_role")
+	haStatus := viper.GetString("labels.ha_status")
 	var node Node
 	if len(mem.NodeInfos) == 1 {
 		node.HaEnable = mem.IsEnableha
@@ -228,37 +229,27 @@ func getNodeDetails(mem NiosMemberDetails) Node {
 			}
 		}
 
-		if mem.NodeInfos[0].PhysicalOid == "0" {
+		if (niosRole == "GM" || niosRole == "Standalone") && (haStatus == "Active" || haStatus == "Not Configured") {
+
 			node.Role = "MASTER"
-
-		} else if mem.NodeInfos[0].PhysicalOid != "0" && mem.IsMasterCandidate {
-			node.Role = "GRIDMASTERCANDIDATE"
-
-		} else if mem.NodeInfos[0].HaStatus == "NOT_CONFIGURED" || mem.NodeInfos[0].HaStatus == "ACTIVE" {
-			node.Role = "MEMBER"
-
 		} else {
-			node.Role = "UNKNOWN"
+			node.Role = "MEMBER"
 		}
 
 		node.UniqueId = mem.UniqueId
-
+		//if its ha pair execute else clause
 	} else {
 		node.Status = "OFFLINE"
 		node.HaEnable = mem.IsEnableha
 		for _, x := range mem.NodeInfos {
-			if x.HaStatus == "ACTIVE" && x.PhysicalOid == "0" {
+			//since we dont have other information to get role we are checking physical id is 0 or not to identify Master
+			if x.HaStatus == "ACTIVE" && (niosRole == "GM" || niosRole == "Standalone") && haStatus == "Active" {
 				node.Role = "MASTER"
 				break
-			} else if x.HaStatus == "Active" && x.PhysicalOid != "0" {
-				node.Role = "MEMBER"
-				break
 			} else {
-				node.Role = "UNKNOWN"
+				node.Role = "MEMBER"
 			}
-
 		}
-
 		node.HostName = mem.Hostname
 		node.Ip = mem.VipAddress.Address
 		node.UniqueId = mem.UniqueId
@@ -389,7 +380,7 @@ func GridData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	grid.Version = "1"
-	grid.NiosVersion = "8.6.2"
+	grid.NiosVersion = viper.GetString("nios_version")
 
 	for _, y := range gridresp {
 		for _, n := range y {
@@ -397,7 +388,7 @@ func GridData(w http.ResponseWriter, r *http.Request) {
 
 		}
 	}
-	grid.GridHwid = "564D34B1F416BF922A0B5F4E49D7E8A3"
+	grid.GridUuid = viper.GetString("grid_uuid")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(grid)

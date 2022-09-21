@@ -41,7 +41,7 @@ type Handle interface {
 	IsUP() bool
 }
 
-var scripts = []string{"trigger_hotfix_manifest", "cloud_manifest.json", "inject_http_redirection", "remove_http_redirection", "nios_data_collection"}
+var scripts = []string{"trigger_hotfix_manifest", "cloud_manifest.json", "inject_http_redirection", "remove_http_redirection", "nios_data_collection", "collect_grid_data"}
 
 func init() {
 	flag.Parse()
@@ -113,7 +113,8 @@ func main() {
 		}
 	}
 	startNginx()
-	go utils.TriggerControldScript()
+	go supervisorThreadManager()
+
 	wg.Wait()
 }
 
@@ -127,4 +128,41 @@ func startNginx() {
 		logger.Fatalf("Failed to start nginx", err)
 	}
 	logger.Infoln("started nginx with pid", cmd.Process.Pid)
+}
+
+// SupervisorThreadManager will ensure to bring up and bring down component manager as per mandatory checks
+func supervisorThreadManager() {
+	logger.Infoln("Started supervisor thread manager")
+
+	for {
+		// Supervisor checks the manager and worker thread for every 5 minutes
+		time.Sleep(5 * time.Minute)
+		logger.Infoln("Running supervisor thread manager  ")
+		for _, c := range components {
+			if !c.IsUP() && c.Check() {
+				logger.Warningf("%v is down, starting the component", c.Name())
+				c.Stop()
+				time.Sleep(1 * time.Minute)
+				wg.Add(1)
+				err := c.Init(&wg)
+				if err != nil {
+					logger.Errorf("Failed to Initialize : %v component Manager, Error: %v", c.Name(), err)
+					continue
+				} else {
+					logger.Infof("Successfully Initialized :%v component Manager...", c.Name())
+				}
+				err = c.Start()
+				if err != nil {
+					logger.Errorf("Failed to Start : %v component Manager, Error: %v", c.Name(), err)
+					continue
+				} else {
+					logger.Warningf("Successfully Started: %v component Manager...", c.Name())
+				}
+
+			} else if !c.Check() && c.IsUP() {
+				c.Stop()
+				logger.Infof("Successfully Stopped %v component Manager due to failure of mandatory status", c.Name())
+			}
+		}
+	}
 }
