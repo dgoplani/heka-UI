@@ -8,19 +8,50 @@ import { UiHotfixComponent } from './ui-content/ui-hotfix/ui-hotfix.component';
 import { AuthGuard } from './ui-guards/auth.guard';
 
 const routes: Routes = [
-  {path: '', redirectTo:'ui', pathMatch: 'full'},
-  {path: 'login', component: LoginComponent},
-  {path: 'logout', component: LogoutComponent},
+  { path: '', 
+    redirectTo:'ui', 
+    pathMatch: 'full'
+  },
+  {  
+    path: 'login', 
+    component: LoginComponent,
+    data: {
+      title: 'BloxConnect - Login'
+    }
+  },
+  {
+    path: 'logout', 
+    component: LogoutComponent,
+    data: {
+      title: 'BloxConnect - Logout'
+    }
+  },
   {
     path: 'ui', 
     component: UiComponent,
     canActivate: [AuthGuard],
     children: [
-      {path: '', redirectTo:'hotfix', pathMatch:'full'},
-      {path: 'hotfix', component: UiHotfixComponent }
+      {
+        path: '', 
+        redirectTo:'hotfix', 
+        pathMatch:'full'
+      },
+      {
+        path: 'hotfix', 
+        component: UiHotfixComponent,
+        data: {
+          title: 'BloxConnect - Hotfix Information'
+        }
+      }
     ]
   },
-  {path: '**', component: NotFoundComponent}
+  {
+    path: '**', 
+    component: NotFoundComponent,
+    data: {
+      title: 'BloxConnect - Not Found'
+    }
+  }
 ];
 
 @NgModule({

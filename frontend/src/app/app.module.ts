@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -27,7 +27,8 @@ import { AuthService } from './ui-services/auth.service';
   ],
   providers: [
     NotificationService, 
-    AuthService
+    AuthService,
+    Title
   ],
   bootstrap: [AppComponent]
 })
