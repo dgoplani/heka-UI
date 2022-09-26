@@ -517,7 +517,7 @@ func MakePostRequest(sec time.Duration, Method, object string, args string, sess
 
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		fmt.Printf("Error while creating the request: %v", err)
+		logger.Errorf("Error while creating the request: %v", err)
 		return 0, nil, err
 	}
 	//set request headers
@@ -568,10 +568,20 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
+	var (
+		login          LoginParams
+		adminGroup     string
+		result         []byte
+		res            *http.Response
+		adminUser      []map[string]interface{}
+		err            error
+		maxRetryPeriod = 2 * time.Minute
+		retryInterval  = 30 * time.Second
+	)
 	// TODO check creds or cookie
 	// Let's handle multiple tab seesion management later
+	urlprofile := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/userprofile?_return_fields=name,admin_group"
 
-	var login LoginParams
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&login); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -580,48 +590,102 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	logger.Infoln(login.Uname, login.Password)
 
-	url := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/request"
-	var input []Manifesta
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	for {
+		result, res, err = validateUser(urlprofile, login)
+		if err != nil {
+			if retryInterval > maxRetryPeriod {
+				logger.Errorf("validate user failed for userprofile %v", err)
+				continue
+			} else {
+				time.Sleep(retryInterval)
+				retryInterval = retryInterval * 2
+				logger.Errorf("Retrying  to validate user profile for %v", r)
+			}
+		}
+		break
 	}
-
-	cli := &http.Client{
-		Transport: tr,
-		Timeout:   2600 * time.Second,
-	}
-	// create request
-	input = []Manifesta{
-		{
-			Method: "GET",
-			Object: "grid",
-			Args: Arguments{
-				Returnfield: "name",
-			},
-		},
-	}
-
-	jsonStr, err := json.Marshal(input)
-	if err != nil {
-		fmt.Printf("Error while creating json input for API call: %v", err)
-		respondWithError(w, http.StatusInternalServerError, "json marshal error")
-	}
-
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonStr))
-	if err != nil {
-		fmt.Printf("Error while creating the request: %v", err)
-		respondWithError(w, http.StatusInternalServerError, "http request error")
-	}
-	//set request headers
-	req.SetBasicAuth(login.Uname, login.Password)
-	req.Header.Add("Content-Type", "application/json")
-	res, err := cli.Do(req)
-	if err != nil {
-		logger.Errorf("Request failed - %v", err)
-		respondWithError(w, http.StatusInternalServerError, "server request error")
+	if res.StatusCode != http.StatusOK {
+		http.Error(w, "Invalid status code", res.StatusCode)
+		logger.Errorf("Unauthorized error:%v", res.StatusCode)
 		return
 	}
-	defer res.Body.Close()
+
+	err = json.Unmarshal(result, &adminUser)
+	if err != nil {
+		logger.Errorf("Failed to unmarshall during validate user for Userprofile:%v", err)
+		return
+	}
+
+	for _, y := range adminUser {
+		if y["admin_group"] != nil {
+			adminGroup = y["admin_group"].(string)
+			break
+		}
+	}
+
+	urladminGroup := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/admingroup?name=" + adminGroup + "&_return_fields=superuser"
+
+	for {
+		result, res, err = validateUser(urladminGroup, login)
+		if err != nil {
+
+			if retryInterval > maxRetryPeriod {
+				logger.Errorf("validate user failed for userprofile %v", err)
+				continue
+			} else {
+				time.Sleep(retryInterval)
+				retryInterval = retryInterval * 2
+				logger.Errorf("Retrying  to validate user profile for %v", r)
+			}
+
+		}
+		break
+	}
+
+	if res.StatusCode != http.StatusOK {
+		http.Error(w, "Invalid status code", res.StatusCode)
+		logger.Errorf("Invalid status code:%v", res.StatusCode)
+		return
+	}
+
+	err = json.Unmarshal(result, &adminUser)
+	if err != nil {
+		http.Error(w, "Failed to unmarshall", http.StatusBadRequest)
+		logger.Errorf("Failed to unmarshall")
+		return
+	}
+	var superUser bool
+	for _, y := range adminUser {
+		if y["superuser"] != nil {
+			superUser = y["superuser"].(bool)
+			if superUser == true {
+				logger.Infoln("its valid usecase pls proceed")
+				break
+
+			} else {
+				respondWithError(w, http.StatusBadRequest, "Only superuser can be logged in")
+				logger.Errorf("Only superuser can be logged in")
+				return
+			}
+		}
+	}
+	logger.Infof("superuser flag is %v  if true proceed to login", superUser)
+	retryInterval = 30 * time.Second
+	for {
+		res, err = callWapiObject(w, r, "GET", "grid", "name", login)
+		if err != nil {
+
+			if retryInterval > maxRetryPeriod {
+				logger.Errorf("callWapiObject failed %v", err)
+				continue
+			} else {
+				time.Sleep(retryInterval)
+				retryInterval = retryInterval * 2
+				logger.Errorf("Retrying callWapiObject for %v", r)
+			}
+		}
+		break
+	}
 	okresponse := res.StatusCode
 	logger.Infoln("okresponse", okresponse)
 
@@ -650,6 +714,90 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		message: "login successfull",
 	}
 	respondWithJSON(w, http.StatusOK, payload)
+}
+
+func callWapiObject(w http.ResponseWriter, r *http.Request, method, object, returnField string, login LoginParams) (*http.Response, error) {
+	url := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/request"
+	var input []Manifesta
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	cli := &http.Client{
+		Transport: tr,
+		Timeout:   2600 * time.Second,
+	}
+	// create request
+	input = []Manifesta{
+		{
+			Method: method,
+			Object: object,
+			Args: Arguments{
+				Returnfield: returnField,
+			},
+		},
+	}
+
+	jsonStr, err := json.Marshal(input)
+	if err != nil {
+		fmt.Printf("Error while creating json input for API call: %v", err)
+		respondWithError(w, http.StatusInternalServerError, "json marshal error")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		fmt.Printf("Error while creating the request: %v", err)
+		respondWithError(w, http.StatusInternalServerError, "http request error")
+	}
+	//set request headers
+	req.SetBasicAuth(login.Uname, login.Password)
+	req.Header.Add("Content-Type", "application/json")
+	res, err := cli.Do(req)
+	if err != nil {
+		logger.Errorf("Request failed - %v", err)
+		respondWithError(w, http.StatusInternalServerError, "server request error")
+		return res, err
+	}
+	defer res.Body.Close()
+
+	return res, nil
+}
+
+// validateUser validates whteher user is superuser or non super user
+func validateUser(url string, login LoginParams) ([]byte, *http.Response, error) {
+
+	//var input []Manifesta
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	cli := &http.Client{
+		Transport: tr,
+		Timeout:   2600 * time.Second,
+	}
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		fmt.Printf("Error while creating the request: %v", err)
+		//respondWithError(w, http.StatusInternalServerError, "http request error")
+	}
+	//set request headers
+	req.SetBasicAuth(login.Uname, login.Password)
+	req.Header.Add("Content-Type", "application/json")
+	res, err := cli.Do(req)
+	if err != nil {
+		logger.Errorf("Request failed - %v", err)
+		//respondWithError(w, http.StatusInternalServerError, "server request error")
+		return nil, res, err
+	}
+	defer res.Body.Close()
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		logger.Errorf("failed to read response body %v", err)
+		return nil, res, err
+	}
+	return data, res, err
+
 }
 
 func cookieManager(cke []*http.Cookie) string {
