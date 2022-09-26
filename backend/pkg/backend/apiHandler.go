@@ -66,6 +66,7 @@ type NiosMemberDetails struct {
 
 type NodeInfo struct {
 	HaStatus      string          `json:"ha_status"`
+	HardwareId    string          `json:"hwid"`
 	MgmtNetwork   Mgmt            `json:"mgmt_network_setting"`
 	PhysicalOid   string          `json:"physical_oid"`
 	ServiceStatus []ServiceStatus `json:"service_status"`
@@ -213,8 +214,8 @@ func ListNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func getNodeDetails(mem NiosMemberDetails) Node {
-	niosRole := viper.GetString("labels.nios_role")
-	haStatus := viper.GetString("labels.ha_status")
+	//hardware_id is obtained from params.json file
+	hardware_id := viper.GetString("labels.hardware_id")
 	var node Node
 	if len(mem.NodeInfos) == 1 {
 		node.HaEnable = mem.IsEnableha
@@ -229,8 +230,7 @@ func getNodeDetails(mem NiosMemberDetails) Node {
 			}
 		}
 
-		if (niosRole == "GM" || niosRole == "Standalone") && (haStatus == "Active" || haStatus == "Not Configured") {
-
+		if node.MasterCandidate && (mem.NodeInfos[0].HaStatus == "ACTIVE") {
 			node.Role = "MASTER"
 		} else {
 			node.Role = "MEMBER"
@@ -241,9 +241,10 @@ func getNodeDetails(mem NiosMemberDetails) Node {
 	} else {
 		node.Status = "OFFLINE"
 		node.HaEnable = mem.IsEnableha
+		node.MasterCandidate = mem.IsMasterCandidate
 		for _, x := range mem.NodeInfos {
-			//since we dont have other information to get role we are checking physical id is 0 or not to identify Master
-			if x.HaStatus == "ACTIVE" && (niosRole == "GM" || niosRole == "Standalone") && haStatus == "Active" {
+			//x.HardwareId is obtained from wapi response
+			if node.MasterCandidate && x.HaStatus == "ACTIVE" && (hardware_id == x.HardwareId) {
 				node.Role = "MASTER"
 				break
 			} else {
@@ -371,7 +372,9 @@ func GridData(w http.ResponseWriter, r *http.Request) {
 	var grid Grid
 	code, resp, err := MakePostRequest(2000, "GET", "grid", args, sess.Value, storedSessValue)
 	if err != nil {
-		logger.Errorf("error while doing Postrequest %v", err)
+		logger.Errorf("Error while doing Postrequest %v", err)
+		http.Error(w, err.Error(), 400)
+		return
 	}
 	err = json.Unmarshal(resp, &gridresp)
 	if err != nil {
