@@ -272,11 +272,11 @@ func getHotfixData(node Node) ([]HotFixData, error) {
 	var responses []HotFixData
 	var hotfixes []interface{}
 	var response HotFixData
-	path := fmt.Sprintf("/etc/storage/hekaui/"+"hotfix_"+"%s", node.HostName)
+	path := fmt.Sprintf(viper.GetString("nios.hotfix.path")+"hotfix_"+"%s", node.HostName)
 	if _, err := os.Stat(path); err == nil {
 		f, err := os.Open(path)
 		if err != nil {
-			logger.Errorf("Unable to read the hotfix  file")
+			logger.Errorf("Unable to read the hotfix file")
 			return nil, err
 		}
 		defer f.Close()
@@ -319,7 +319,7 @@ func CloudManifest(w http.ResponseWriter, r *http.Request) {
 	var result map[string]interface{}
 	var response []byte
 
-	f, err := os.Open("/etc/onprem.d/scripts/cloud_manifest.json")
+	f, err := os.Open(viper.GetString("cloud.manifest.file"))
 	if err != nil {
 		logger.Errorf("unable to read the cloud manifest file", err)
 		http.Error(w, err.Error(), 400)
@@ -588,7 +588,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	logger.Infoln(login.Uname, login.Password)
 
 	for {
 		result, res, err = validateUser(urlprofile, login)

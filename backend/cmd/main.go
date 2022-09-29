@@ -41,7 +41,7 @@ type Handle interface {
 	IsUP() bool
 }
 
-var scripts = []string{"trigger_hotfix_manifest", "cloud_manifest.json", "inject_http_redirection", "remove_http_redirection", "nios_data_collection", "collect_grid_data"}
+var scripts = []string{"trigger_hotfix_manifest", "inject_http_redirection", "remove_http_redirection", "nios_data_collection", "collect_grid_data"}
 
 func init() {
 	flag.Parse()
