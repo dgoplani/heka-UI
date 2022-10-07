@@ -230,7 +230,7 @@ func getNodeDetails(mem NiosMemberDetails) Node {
 			}
 		}
 
-		if node.MasterCandidate && (mem.NodeInfos[0].HaStatus == "ACTIVE") {
+		if (node.MasterCandidate && (mem.NodeInfos[0].HaStatus == "ACTIVE" || mem.NodeInfos[0].HaStatus == "NOT_CONFIGURED")) && (hardware_id == mem.NodeInfos[0].HardwareId) {
 			node.Role = "MASTER"
 		} else {
 			node.Role = "MEMBER"
