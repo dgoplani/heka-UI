@@ -15,7 +15,8 @@ export class HotfixService {
 
   constructor(private http : HttpClient, private router: Router) { 
     if(environment.production){
-      this.server = "https://"+window.location.host+"/bloxconnect/api";
+      //this.server = "https://"+window.location.host+"/bloxconnect/api";
+      this.server = '/bloxconnect/api';
     } else {
       this.server = "http://127.0.0.1:5200";
     }

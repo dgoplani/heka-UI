@@ -5,6 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { BnNgIdleService } from 'bn-ng-idle';
+
 import { UserAuthModule} from './user-auth/user-auth.module'
 import { UiContentModule } from './ui-content/ui-content.module';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -28,7 +30,8 @@ import { AuthService } from './ui-services/auth.service';
   providers: [
     NotificationService, 
     AuthService,
-    Title
+    Title,
+    BnNgIdleService
   ],
   bootstrap: [AppComponent]
 })

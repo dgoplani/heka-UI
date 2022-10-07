@@ -41,7 +41,7 @@
 
 .login-input  {
     position: relative;
-    padding-top: 15px;
+    padding-top: 1.25em;
     width: 65%;
 }
 
@@ -58,7 +58,7 @@
 
 .login-input > span {
     position: absolute;
-    padding: 10px;
+    padding: 0.75em;
     pointer-events: none;
     font-size: 1.25em;
     color: gray;
