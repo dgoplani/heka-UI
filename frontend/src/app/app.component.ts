@@ -35,7 +35,8 @@ export class AppComponent implements OnInit{
         this.titleService.setTitle(data['title'])});  
     });  
 
-    this.userIdleService.startWatching(60).subscribe((isTimedOut: Boolean) => {
+    // TODO : Make session timeout sync from NIOS instead of hardcoded 10 mins
+    this.userIdleService.startWatching(600).subscribe((isTimedOut: Boolean) => {
       //console.log("Timeout: ", isTimedOut);
       if(this.auth.isAuthenticated() && isTimedOut) {
         console.log("Session Expired: Logging Out");

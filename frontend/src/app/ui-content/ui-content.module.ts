@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -35,6 +35,9 @@ import { UiNotificationComponent } from './ui-notification/ui-notification.compo
   ],
   exports: [
     UiComponent
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class UiContentModule { 

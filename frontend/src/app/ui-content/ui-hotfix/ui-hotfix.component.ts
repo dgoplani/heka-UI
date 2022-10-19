@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { HotfixService } from 'src/app/ui-services/hotfix.service';
 import { Notification } from 'src/app/interfaces/notification';
 import { NotificationService } from 'src/app/ui-services/notification.service';
@@ -57,7 +58,8 @@ export class UiHotfixComponent implements OnInit {
 
   constructor(private ui_service: UiService,
               private hf_service: HotfixService, 
-              private notify_service: NotificationService) { }
+              private notify_service: NotificationService,
+              private date_pipe: DatePipe) { }
 
   ngOnInit(): void { 
     this.node_loading = true;
@@ -250,6 +252,7 @@ export class UiHotfixComponent implements OnInit {
     this.sortColumn = '';
     this.sortOrder = '';
   }
+
   clearAll(): void {
     this.collapseAll();
     this.displayData = this.data;
@@ -278,7 +281,8 @@ export class UiHotfixComponent implements OnInit {
   }
 
   onSearch(search: any): void {
-    var searchStr: string = search.currentTarget.value;
+    let searchStr: string = search.currentTarget.value;
+    let valStr: string|null;
     searchStr = searchStr.trim().toLowerCase();
     if(searchStr.length == 0) {
       this.searchApplied = false;
@@ -289,8 +293,18 @@ export class UiHotfixComponent implements OnInit {
     this.clearFilter();
     this.searchApplied = true;
     this.displayData = this.data.filter((ele: any) => {
-      for(let k in ele){
-        if(typeof ele[k] != 'boolean' && ele[k].toString().toLowerCase().match(searchStr)) {
+      for(let k in ele) {
+        switch(k) {
+          case 'released':
+            valStr = this.date_pipe.transform(ele[k], 'dd-MM-yyyy, hh:mm:ss a');
+            break;
+          case 'requiredActions':
+            valStr = this.getRequiredActionString(ele[k]);
+            break;
+          default:
+            valStr = ele[k].toString();
+        }
+        if(typeof ele[k] != 'boolean' && valStr!.toLowerCase().match(searchStr)) {
           return true;
         }
       }
@@ -299,7 +313,7 @@ export class UiHotfixComponent implements OnInit {
   }
 
   findNode(search: any): void {
-    var searchStr: string = search.currentTarget.value;
+    let searchStr: string = search.currentTarget.value;
     searchStr = searchStr.trim().toLowerCase();
     if(searchStr.length == 0) {
       this.listNodes = this.allNodes;
@@ -307,7 +321,7 @@ export class UiHotfixComponent implements OnInit {
     }
     this.listNodes = this.allNodes.filter((ele: any) => {
       for(let k in ele){
-        if(typeof ele[k] != 'boolean' && ele[k].toString().toLowerCase().match(searchStr)) {
+        if(typeof ele[k] != 'boolean' && k != 'unique_id' && ele[k].toString().toLowerCase().match(searchStr)) {
           return true;
         }
       }
@@ -464,7 +478,4 @@ export class UiHotfixComponent implements OnInit {
     this.notify_service.sendNotification(n);
   }
 
-  testFunc(): void {
-
-  }
 }
