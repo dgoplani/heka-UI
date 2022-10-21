@@ -89,11 +89,12 @@ export class UiNotifyPlaneComponent implements OnInit {
   }
 
   handleHotfixNotification(ndata: Notification) {
+    let delay = this.calculateDelay();
     setTimeout(() => {
       let n = this.nAlertPlane.createComponent<UiNotificationComponent>(UiNotificationComponent);
       n.instance.initNotification(ndata, 'ALERT_PLANE', n);
-      n.instance.showNotification(this.stdExitDelay);
-    }, this.calculateDelay());
+      n.instance.showNotification(this.stdExitDelay + delay);
+    }, delay);
     this.addToHistoryNotification(ndata);
   }
 

@@ -66,17 +66,22 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row">Important</th>
+                                <td class="mdt-not-installed" scope="row">Mandatory</td>
+                                <td>{{hotfixSummary['MANDATORY']['available']}}</td>
+                                <td>{{hotfixSummary['MANDATORY']['installed']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="imp-not-installed" scope="row">Important</td>
                                 <td>{{hotfixSummary['IMPORTANT']['available']}}</td>
                                 <td>{{hotfixSummary['IMPORTANT']['installed']}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Recommended</th>
+                                <td class="rmd-not-installed" scope="row">Recommended</td>
                                 <td>{{hotfixSummary['RECOMMENDED']['available']}}</td>
                                 <td>{{hotfixSummary['RECOMMENDED']['installed']}}</td>
                             </tr>
                             <tr>
-                                <th scope="row">Optional</th>
+                                <td scope="row">Optional</td>
                                 <td>{{hotfixSummary['OPTIONAL']['available']}}</td>
                                 <td>{{hotfixSummary['OPTIONAL']['installed']}}</td>
                             </tr>
@@ -113,7 +118,7 @@
                     <button [ngClass]="filterApplied ? 'btn btn-dark btn-table-top' : 'btn btn-secondary btn-table-top'" type="button" role="button" id="filterBtn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         Filter <fa-icon [icon]="['fas', 'filter']" size="sm"></fa-icon>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="filterBtn">
+                    <ul class="dropdown-menu" style="max-height: 66%; overflow-y: auto;" aria-labelledby="filterBtn">
                         <ng-container *ngFor="let fd of filterData | keyvalue">
                             <li class="dropdown-header">
                                 <label for="{{displayColsMap[fd.key]}}">
@@ -159,9 +164,9 @@
                                             <fa-icon [icon]="d.show? ['far', 'square-minus']: ['far', 'square-plus']" size="lg"></fa-icon>
                                         </button>
                                     </td>
-                                    <td [ngClass]="getColorClass(d.applyStatus, d.severity)">{{ d.applyStatus }}</td>
+                                    <td [ngClass]="getColorClass(d.applyStatus, '')">{{ d.applyStatus }}</td>
+                                    <td [ngClass]="getColorClass('', d.severity)">{{ d.severity }}</td>
                                     <td><button class="hotfix-name-btn" type="button" role="button" (click)="hotfixModal.openModal(d, listNodes)">{{ d.name }}</button></td>
-                                    <td>{{ d.severity }}</td>
                                     <td>{{ d.type }}</td>
                                     <td>{{ d.released | date:'dd-MM-yyyy, hh:mm:ss a' }}</td>
                                     <td>{{ (d.impactedArea.length > 0)? d.impactedArea.join(', ') : '-' }}</td>

@@ -84,8 +84,12 @@ button.n-btn-action:hover > span.btn-symbol {
     display: inline;
 }
 
-.important {
+.mandatory {
     color: crimson;
+}
+
+.important {
+    color: chocolate;
 }
 
 .recommended {

@@ -31,18 +31,20 @@ export class UiHotfixComponent implements OnInit {
   data: ProcessedHotfix[] = [];
   displayData: ProcessedHotfix[] = [];
 
-  displayCols: string[] = ['applyStatus', 'name', 'severity', 'type', 'released', 'impactedArea', 'requiredActions'];
+  displayCols: string[] = ['applyStatus', 'severity', 'name', 'type', 'released', 'impactedArea', 'requiredActions'];
   displayColsMap: {[key:string]:string} = {
     'applyStatus': 'Status', 
-    'name': 'Hotfix Name',
     'severity': 'Severity',
+    'name': 'Hotfix Name',
     'type': 'Type',
     'released': 'Release Date',
     'impactedArea': 'Impacted Area(s)',
-    'requiredActions': 'Action Required'
+    // 'requiredActions': 'Action Required'
+    'requiredActions': 'Post Install Action'
   };
   
   hotfixSummary: {[key:string]:{[key:string]:number}} = {
+    'MANDATORY' : { 'available': 0, 'installed': 0 },
     'IMPORTANT' : { 'available': 0, 'installed': 0 },
     'RECOMMENDED' : { 'available': 0, 'installed': 0 },
     'OPTIONAL' : { 'available': 0, 'installed': 0 }
@@ -358,6 +360,8 @@ export class UiHotfixComponent implements OnInit {
 
   processData() {
     let temp_data: ProcessedHotfix[] = [];
+    this.hotfixSummary['MANDATORY']['available'] = 0;
+    this.hotfixSummary['MANDATORY']['installed'] = 0;
     this.hotfixSummary['IMPORTANT']['available'] = 0;
     this.hotfixSummary['IMPORTANT']['installed'] = 0;
     this.hotfixSummary['RECOMMENDED']['available'] = 0;
@@ -416,16 +420,20 @@ export class UiHotfixComponent implements OnInit {
   }
 
   getColorClass(applyStatus: string, severity: string): string {
-    if(applyStatus === 'Installed'){
+    if (applyStatus === 'Installed') {
       return 'installed';
     }
-    if(applyStatus === 'Not Installed'){
-      if(severity === 'IMPORTANT'){
+    if (applyStatus === 'Not Installed' || applyStatus === '') {
+      if (severity === 'MANDATORY') {
+        return 'mdt-not-installed';
+      } else if(severity === 'IMPORTANT') {
         return 'imp-not-installed';
-      }
-      if(severity === 'RECOMMENDED'){
+      } else if(severity === 'RECOMMENDED') {
         return 'rmd-not-installed';
       }
+    }
+    if (applyStatus === 'Reverted') {
+      return 'reverted';
     }
     return 'default';
   }
@@ -461,6 +469,9 @@ export class UiHotfixComponent implements OnInit {
         break;
       case 'IMPORTANT':
         msg = "A important hotfix is available, it is recommended to apply the hotfix as soon as possible.";
+        break;
+      case 'MANDATORY':
+        msg = "A mandatory hotfix is available, It is neccessary to apply this to avoid any critical failures.";
         break;
       default:
         msg = "A hotfix is available, please apply the hotfix to improve system stablity.";

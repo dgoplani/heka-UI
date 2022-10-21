@@ -118,20 +118,36 @@ td.installed {
     color: limegreen;
 }
 
-td.imp-not-installed {
+td.mdt-not-installed {
     color: red;
+}
+
+td.imp-not-installed {
+    color: chocolate;
 }
 
 td.rmd-not-installed {
     color: blue;
 }
 
+td.reverted {
+    color: gold;
+}
+
 tr.installed {
     background: lightgreen;
 }
 
-tr.imp-not-installed {
+tr.reverted {
+    background: khaki;
+}
+
+tr.mdt-not-installed {
     background: lightpink;
+}
+
+tr.imp-not-installed {
+    background: rgb(253, 190, 165);
 }
 
 tr.rmd-not-installed {

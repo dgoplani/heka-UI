@@ -5,7 +5,7 @@
         <div *ngSwitchCase="'HOTFIX'" class="n-hotfix-wrapper">
             <div class="row align-items-center justify-content-start n-hotifx-body m-0 px-0 pt-0 pb-2">
                 <div class="col-auto px-2">
-                    <fa-icon [ngClass]="(ndata.type=='IMPORTANT')? 'important':'recommended'" [icon]="['fas','exclamation-triangle']" size="2x"></fa-icon>
+                    <fa-icon [ngClass]="ndata.type.toLowerCase()" [icon]="['fas','exclamation-triangle']" size="2x"></fa-icon>
                 </div>
                 <div class="col px-2">
                     <span style="pointer-events: none;">{{ndata.body}}</span>
