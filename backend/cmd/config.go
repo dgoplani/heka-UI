@@ -20,7 +20,7 @@ const (
 	defaultHotfixInterval     = 5 * time.Minute
 	defaultGridUuid           = ""
 	defaultNiosVersion        = ""
-	defaultManifestFile       = "/etc/storage/hekaui/cloud_manifest.json"
+	defaultManifestFile       = "/etc/storage/hekaui/nios_manifest.json"
 	defaultNiosHotfixPath     = "/etc/storage/hekaui/"
 )
 
@@ -38,6 +38,6 @@ var (
 	flagPollInterval   = flag.Duration("hotfix.interval", defaultHotfixInterval, "sleep time untill that hotfix data will be collected")
 	flagGridUUid       = flag.String("grid_uuid", defaultGridUuid, "Wapi version to be used to make NIOS APi call")
 	flagNiosVersion    = flag.String("nios_version", defaultNiosVersion, "sleep time untill that hotfix data will be collected")
-	flagManifestFile   = flag.String("cloud.manifest.file", defaultManifestFile, "cloud hotfix manifest file after filter")
+	flagManifestFile   = flag.String("nios.manifest.file", defaultManifestFile, "nios hotfix manifest file after filter")
 	flagNiosHotfixFile = flag.String("nios.hotfix.path", defaultNiosHotfixPath, "nios hotfix file path")
 )

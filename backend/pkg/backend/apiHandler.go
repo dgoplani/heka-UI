@@ -319,7 +319,7 @@ func CloudManifest(w http.ResponseWriter, r *http.Request) {
 	var result map[string]interface{}
 	var response []byte
 
-	f, err := os.Open(viper.GetString("cloud.manifest.file"))
+	f, err := os.Open(viper.GetString("nios.manifest.file"))
 	if err != nil {
 		logger.Errorf("unable to read the cloud manifest file", err)
 		http.Error(w, err.Error(), 400)
