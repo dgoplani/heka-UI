@@ -3,3 +3,9 @@ button.btn-notification-bell {
     border: none;
     background-color: transparent;
 }
+
+button.btn-modal-close {
+    float: right;
+    border: none;
+    outline: none;
+}

@@ -39,7 +39,7 @@
                 <div class="row align-items-start justify-content-start">
                     <div class="col-md-2 col-4 section-title">Release Date</div>
                     <div class="col-md-10 col-8">
-                        <div class="row">{{ hf.released | date:'MMMM d, yyyy hh:mm:ss a' }}</div>
+                        <div class="row">{{ hf.released == '' ? 'Not Available' : hf.released | date:'MMMM d, yyyy hh:mm:ss a' }}</div>
                     </div>
                 </div>
                 <div class="row align-items-start justify-content-start">

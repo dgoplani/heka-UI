@@ -58,12 +58,18 @@ table.node-summary th, table.hotfix-summary th {
     font-weight: 600;
 }
 
+table.hotfix-summary td 
+{
+    text-align: right;
+}
+
 table.node-summary th, 
 table.hotfix-summary th,
 table.node-summary td, 
 table.hotfix-summary td
 {
     padding: 0 5px;
+    vertical-align: middle;
 }
 
 .online {
@@ -205,6 +211,7 @@ button.hotfix-name-btn {
     border: none;
     padding: 0;
     color: black;
+    text-align: left;
     word-break: break-all;
     min-width: 100px;
     background-color: transparent;

@@ -61,31 +61,42 @@
                     <table class="hotfix-summary">
                         <thead>
                             <tr style="background: lightgrey;">
-                                <th scope="col">Hofixes</th><th>Available</th><th>Installed</th>
+                                <th>Hotfixes</th>
+                                <td class="mdt-not-installed">Mandatory</td>
+                                <td class="imp-not-installed">Important</td>
+                                <td class="rmd-not-installed">Recommended</td>
+                                <td>Optional</td>
+                                <td>Custom</td>
+                                <td style="font-weight: bold;">Total</td>
+                            </tr>
+                            <tr>
+                                <th>Available</th>
+                                <td>{{hotfixSummary['MANDATORY']['available']}}</td>
+                                <td>{{hotfixSummary['IMPORTANT']['available']}}</td>
+                                <td>{{hotfixSummary['RECOMMENDED']['available']}}</td>
+                                <td>{{hotfixSummary['OPTIONAL']['available']}}</td>
+                                <td>{{hotfixSummary['CUSTOM']['available']}}</td>
+                                <td>{{hotfixSummary['TOTAL']['available']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Installed</th>
+                                <td>{{hotfixSummary['MANDATORY']['installed']}}</td>
+                                <td>{{hotfixSummary['IMPORTANT']['installed']}}</td>
+                                <td>{{hotfixSummary['RECOMMENDED']['installed']}}</td>
+                                <td>{{hotfixSummary['OPTIONAL']['installed']}}</td>
+                                <td>{{hotfixSummary['CUSTOM']['installed']}}</td>
+                                <td>{{hotfixSummary['TOTAL']['installed']}}</td>
+                            </tr>
+                            <tr>
+                                <th>Reverted</th>
+                                <td>{{hotfixSummary['MANDATORY']['reverted']}}</td>
+                                <td>{{hotfixSummary['IMPORTANT']['reverted']}}</td>
+                                <td>{{hotfixSummary['RECOMMENDED']['reverted']}}</td>
+                                <td>{{hotfixSummary['OPTIONAL']['reverted']}}</td>
+                                <td>{{hotfixSummary['CUSTOM']['reverted']}}</td>
+                                <td>{{hotfixSummary['TOTAL']['reverted']}}</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="mdt-not-installed" scope="row">Mandatory</td>
-                                <td>{{hotfixSummary['MANDATORY']['available']}}</td>
-                                <td>{{hotfixSummary['MANDATORY']['installed']}}</td>
-                            </tr>
-                            <tr>
-                                <td class="imp-not-installed" scope="row">Important</td>
-                                <td>{{hotfixSummary['IMPORTANT']['available']}}</td>
-                                <td>{{hotfixSummary['IMPORTANT']['installed']}}</td>
-                            </tr>
-                            <tr>
-                                <td class="rmd-not-installed" scope="row">Recommended</td>
-                                <td>{{hotfixSummary['RECOMMENDED']['available']}}</td>
-                                <td>{{hotfixSummary['RECOMMENDED']['installed']}}</td>
-                            </tr>
-                            <tr>
-                                <td scope="row">Optional</td>
-                                <td>{{hotfixSummary['OPTIONAL']['available']}}</td>
-                                <td>{{hotfixSummary['OPTIONAL']['installed']}}</td>
-                            </tr>
-                        </tbody>
                         
                     </table>
                 </div>
@@ -168,7 +179,7 @@
                                     <td [ngClass]="getColorClass('', d.severity)">{{ d.severity }}</td>
                                     <td><button class="hotfix-name-btn" type="button" role="button" (click)="hotfixModal.openModal(d, listNodes)">{{ d.name }}</button></td>
                                     <td>{{ d.type }}</td>
-                                    <td>{{ d.released | date:'dd-MM-yyyy, hh:mm:ss a' }}</td>
+                                    <td>{{ d.released == '' ? '-' : d.released | date:'dd-MM-yyyy, hh:mm:ss a' }}</td>
                                     <td>{{ (d.impactedArea.length > 0)? d.impactedArea.join(', ') : '-' }}</td>
                                     <td>{{ getRequiredActionString(d.requiredActions) }}</td>
                                 </tr>

@@ -6,7 +6,7 @@ import { NotificationService } from 'src/app/ui-services/notification.service';
 import { UiService } from 'src/app/ui-services/ui.service';
 import { NodeData } from 'src/app/interfaces/node-data';
 import { NodeHotfixData } from 'src/app/interfaces/node-hotfix-data';
-import { CloudHotfixManifest, Hotfix, HotfixFixes, HotfixRequiredActions, ProcessedHotfix } from 'src/app/interfaces/cloud-hotfix-manifest';
+import { CloudHotfixManifest, Hotfix, HotfixFixes, HotfixRequiredActions, HotfixRevert, ProcessedHotfix } from 'src/app/interfaces/cloud-hotfix-manifest';
 
 @Component({
   selector: 'app-ui-hotfix',
@@ -44,10 +44,12 @@ export class UiHotfixComponent implements OnInit {
   };
   
   hotfixSummary: {[key:string]:{[key:string]:number}} = {
-    'MANDATORY' : { 'available': 0, 'installed': 0 },
-    'IMPORTANT' : { 'available': 0, 'installed': 0 },
-    'RECOMMENDED' : { 'available': 0, 'installed': 0 },
-    'OPTIONAL' : { 'available': 0, 'installed': 0 }
+    'MANDATORY' : { 'available': 0, 'installed': 0, 'reverted': 0 },
+    'IMPORTANT' : { 'available': 0, 'installed': 0, 'reverted': 0 },
+    'RECOMMENDED' : { 'available': 0, 'installed': 0, 'reverted': 0 },
+    'OPTIONAL' : { 'available': 0, 'installed': 0, 'reverted': 0 },
+    'CUSTOM' : { 'available': 0, 'installed': 0, 'reverted': 0 },
+    'TOTAL' : { 'available': 0, 'installed': 0, 'reverted': 0 }
   }
 
   sortColumn: string = '';
@@ -296,6 +298,9 @@ export class UiHotfixComponent implements OnInit {
     this.searchApplied = true;
     this.displayData = this.data.filter((ele: any) => {
       for(let k in ele) {
+        if(ele[k] === '') {
+          continue;
+        }
         switch(k) {
           case 'released':
             valStr = this.date_pipe.transform(ele[k], 'dd-MM-yyyy, hh:mm:ss a');
@@ -360,14 +365,11 @@ export class UiHotfixComponent implements OnInit {
 
   processData() {
     let temp_data: ProcessedHotfix[] = [];
-    this.hotfixSummary['MANDATORY']['available'] = 0;
-    this.hotfixSummary['MANDATORY']['installed'] = 0;
-    this.hotfixSummary['IMPORTANT']['available'] = 0;
-    this.hotfixSummary['IMPORTANT']['installed'] = 0;
-    this.hotfixSummary['RECOMMENDED']['available'] = 0;
-    this.hotfixSummary['RECOMMENDED']['installed'] = 0;
-    this.hotfixSummary['OPTIONAL']['available'] = 0;
-    this.hotfixSummary['OPTIONAL']['installed'] = 0;
+    ['MANDATORY', 'IMPORTANT', 'RECOMMENDED', 'OPTIONAL', 'CUSTOM', 'TOTAL'].forEach((n: string) => {
+      ['available', 'installed', 'reverted'].forEach((m: string) => {
+        this.hotfixSummary[n][m] = 0;
+      });
+    });
 
     this.hotfix_info.data.forEach((hf_data: Hotfix, index: number) => {
 
@@ -394,6 +396,7 @@ export class UiHotfixComponent implements OnInit {
                   temp_hf.applyTimestamp = hf.timestamp;
                 }
                 this.hotfixSummary[hf_data.severity]['installed'] -= 1;
+                this.hotfixSummary[hf_data.severity]['reverted'] += 1;
               } 
             }
           });
@@ -404,6 +407,46 @@ export class UiHotfixComponent implements OnInit {
         }
       }
     });
+
+    if(this.selectedNodeData.status === 'ONLINE') {
+      let offset = temp_data.length+1;
+      this.selectedNodeData.hotfixes.forEach((node_hf: any, index: number) => {
+        if (this.hotfix_info.data.find((hf: Hotfix) => (hf.name === node_hf.name || hf.revert.name === node_hf.name)) === undefined) {
+          console.log(node_hf.name)
+          let temp_hf = <ProcessedHotfix>{
+            name: node_hf.name,
+            sha256: '',
+            revert: <HotfixRevert>{},
+            ticketId: '',
+            released: '',
+            compatibleReleases: [],
+            type: 'Custom',
+            compatibleNode: node_hf.role,
+            summary: 'This is a customer specific hotfix, please contact infoblox customer support for more information.',
+            impactedArea: [],
+            fixes: {BUGFIX: [], CVE: [], SECURITY: []},
+            severity: 'CUSTOM',
+            references: [],
+            requiredActions: {systemReboot: "No", productRestart: "No", serviceRestart:[]},
+            incompatible: [],
+            applyStatus: 'Installed',
+            applyTimestamp: node_hf.timestamp,
+            idx: index+offset,
+            show: false
+          };
+          temp_data.push(temp_hf);
+          this.hotfixSummary['CUSTOM']['available'] += 1;
+          this.hotfixSummary['CUSTOM']['installed'] += 1;
+        }
+      });
+    }
+
+    ['MANDATORY', 'IMPORTANT', 'RECOMMENDED', 'OPTIONAL', 'CUSTOM'].forEach((n: string) => {
+      ['available', 'installed', 'reverted'].forEach((m: string) => {
+        this.hotfixSummary['TOTAL'][m] += this.hotfixSummary[n][m];
+      });
+    });
+
     console.log(temp_data);
     return temp_data;
   }
