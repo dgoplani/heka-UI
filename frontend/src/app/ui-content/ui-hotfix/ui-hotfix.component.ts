@@ -296,9 +296,10 @@ export class UiHotfixComponent implements OnInit {
     this.collapseAll();
     this.clearFilter();
     this.searchApplied = true;
-    this.displayData = this.data.filter((ele: any) => {
-      for(let k in ele) {
-        if(ele[k] === '') {
+    this.displayData = this.data.filter((ele: ProcessedHotfix) => {
+      let k: keyof typeof ele;
+      for(k in ele) {
+        if(ele[k] == undefined || ele[k] == '') {
           continue;
         }
         switch(k) {
@@ -310,6 +311,7 @@ export class UiHotfixComponent implements OnInit {
             break;
           default:
             valStr = ele[k].toString();
+            break;
         }
         if(typeof ele[k] != 'boolean' && valStr!.toLowerCase().match(searchStr)) {
           return true;
@@ -326,9 +328,10 @@ export class UiHotfixComponent implements OnInit {
       this.listNodes = this.allNodes;
       return;
     }
-    this.listNodes = this.allNodes.filter((ele: any) => {
-      for(let k in ele){
-        if(typeof ele[k] != 'boolean' && k != 'unique_id' && ele[k].toString().toLowerCase().match(searchStr)) {
+    this.listNodes = this.allNodes.filter((ele: NodeData) => {
+      let k: keyof typeof ele;
+      for(k in ele){
+        if(ele[k] != undefined && typeof ele[k] != 'boolean' && k != 'unique_id' && ele[k].toString().toLowerCase().match(searchStr)) {
           return true;
         }
       }
