@@ -151,6 +151,10 @@ func validate_manifest_file(ManifestData *NiosHotfixManifest) error {
 		if err != nil {
 			return fmt.Errorf("%s - %s", Hotfix.Released, err.Error())
 		}
+		err = validate_regex(Hotfix.Released, "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$")
+		if err != nil {
+			return fmt.Errorf("Hotfix released timestamp should be in 'yyyy-MM-ddThh:mm:ss.sssZ' format.")
+		}
 
 		fmt.Println("compatibleReleases:")
 		if len(Hotfix.CompatibleReleases) <= 0 {

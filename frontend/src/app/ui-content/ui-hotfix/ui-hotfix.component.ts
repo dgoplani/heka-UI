@@ -134,32 +134,34 @@ export class UiHotfixComponent implements OnInit {
     }
     if (this.sortOrder === "" || this.sortOrder === "dsc"){
       this.sortOrder = "asc";
-      switch(colName) {
-        case 'impactedArea':
-          this.displayData.sort((a: any,b: any) => a[colName].join(', ') > b[colName].join(', ') ? 1 : -1);
-          break;
-        case 'requiredActions':
-          this.displayData.sort((a: any,b: any) => this.getRequiredActionString(a[colName]) > this.getRequiredActionString(b[colName]) ? 1 : -1);
-          break;
-        default:
-          this.displayData.sort((a: any,b: any) => a[colName] > b[colName] ? 1 : -1);
-          break;
-      }
-      
     } else if (this.sortOrder === "asc"){
       this.sortOrder = "dsc";
+    }
+
+    this.displayData.sort((a: any, b:any) => {
+      let aa:any, bb: any;
       switch(colName) {
         case 'impactedArea':
-          this.displayData.sort((a: any,b: any) => a[colName].join(', ') < b[colName].join(', ') ? 1 : -1);
+          aa = a[colName].join(', ');
+          bb = b[colName].join(', ');
           break;
         case 'requiredActions':
-          this.displayData.sort((a: any,b: any) => this.getRequiredActionString(a[colName]) < this.getRequiredActionString(b[colName]) ? 1 : -1);
+          aa = this.getRequiredActionString(a[colName]);
+          bb = this.getRequiredActionString(b[colName]);
           break;
         default:
-          this.displayData.sort((a: any,b: any) => a[colName] < b[colName] ? 1 : -1);
+          aa = a[colName];
+          bb = b[colName];
           break;
       }
-    }
+      if (aa == bb) {
+        return 0;
+      } else if (aa > bb) {
+        return this.sortOrder == "asc" ? 1 : -1;
+      } else {
+        return this.sortOrder == "asc" ? -1 : 1;;
+      }
+    });
   }
 
   genFilterData():void {
@@ -378,11 +380,7 @@ export class UiHotfixComponent implements OnInit {
 
       if(hf_data.compatibleNode === 'ALL' || hf_data.compatibleNode === this.selectedNodeData.role) {
         let temp_hf: ProcessedHotfix;
-        // temp_hf = Object.assign(hf_data);
         temp_hf = {...hf_data, applyStatus: 'Not Available', applyTimestamp: '', idx: index, show: false};
-        // temp_hf.applyStatus = 'Not Available';
-        // temp_hf.applyTimestamp = '';
-        this.hotfixSummary[hf_data.severity]['available'] += 1;
         if(this.selectedNodeData.status === 'ONLINE') {
           temp_hf.applyStatus = 'Not Installed';
           this.selectedNodeData.hotfixes.forEach((hf: any) => {
@@ -392,14 +390,11 @@ export class UiHotfixComponent implements OnInit {
                   temp_hf.applyStatus = 'Installed';
                   temp_hf.applyTimestamp = hf.timestamp;
                 }
-                this.hotfixSummary[hf_data.severity]['installed'] += 1;
               } else if (hf_data.revert && hf_data.revert.name === hf.name) {
                 if (temp_hf.applyTimestamp < hf.timestamp) {
                   temp_hf.applyStatus = 'Reverted';
                   temp_hf.applyTimestamp = hf.timestamp;
                 }
-                this.hotfixSummary[hf_data.severity]['installed'] -= 1;
-                this.hotfixSummary[hf_data.severity]['reverted'] += 1;
               } 
             }
           });
@@ -414,40 +409,51 @@ export class UiHotfixComponent implements OnInit {
     if(this.selectedNodeData.status === 'ONLINE') {
       let offset = temp_data.length+1;
       this.selectedNodeData.hotfixes.forEach((node_hf: any, index: number) => {
-        if (this.hotfix_info.data.find((hf: Hotfix) => (hf.name === node_hf.name || hf.revert.name === node_hf.name)) === undefined) {
-          console.log(node_hf.name)
-          let temp_hf = <ProcessedHotfix>{
-            name: node_hf.name,
-            sha256: '',
-            revert: <HotfixRevert>{},
-            ticketId: '',
-            released: '',
-            compatibleReleases: [],
-            type: 'Custom',
-            compatibleNode: node_hf.role,
-            summary: 'This is a customer specific hotfix, please contact infoblox customer support for more information.',
-            impactedArea: [],
-            fixes: {BUGFIX: [], CVE: [], SECURITY: []},
-            severity: 'CUSTOM',
-            references: [],
-            requiredActions: {systemReboot: "No", productRestart: "No", serviceRestart:[]},
-            incompatible: [],
-            applyStatus: 'Installed',
-            applyTimestamp: node_hf.timestamp,
-            idx: index+offset,
-            show: false
-          };
-          temp_data.push(temp_hf);
-          this.hotfixSummary['CUSTOM']['available'] += 1;
-          this.hotfixSummary['CUSTOM']['installed'] += 1;
+        if(node_hf.status == 'SUCCESS') {
+          if (this.hotfix_info.data.find((hf: Hotfix) => (hf.name === node_hf.name || hf.revert.name === node_hf.name)) === undefined) {
+            console.log(node_hf.name);
+            let temp_hf = <ProcessedHotfix>{
+              name: node_hf.name,
+              sha256: '',
+              revert: <HotfixRevert>{},
+              ticketId: '',
+              released: '',
+              compatibleReleases: [],
+              type: 'Custom',
+              compatibleNode: node_hf.role,
+              summary: 'This is a customer specific hotfix, please contact infoblox customer support for more information.',
+              impactedArea: [],
+              fixes: {BUGFIX: [], CVE: [], SECURITY: []},
+              severity: 'CUSTOM',
+              references: [],
+              requiredActions: {systemReboot: "No", productRestart: "No", serviceRestart:[]},
+              incompatible: [],
+              applyStatus: 'Installed',
+              applyTimestamp: node_hf.timestamp,
+              idx: index+offset,
+              show: false
+            };
+            temp_data.push(temp_hf);
+          }
         }
       });
     }
 
-    ['MANDATORY', 'IMPORTANT', 'RECOMMENDED', 'OPTIONAL', 'CUSTOM'].forEach((n: string) => {
-      ['available', 'installed', 'reverted'].forEach((m: string) => {
-        this.hotfixSummary['TOTAL'][m] += this.hotfixSummary[n][m];
-      });
+    temp_data.forEach((hf: ProcessedHotfix) => {
+      this.hotfixSummary[hf.severity]['available'] += 1;
+      this.hotfixSummary['TOTAL']['available'] += 1;
+      switch(hf.applyStatus){
+        case 'Installed':
+          this.hotfixSummary[hf.severity]['installed'] += 1;
+          this.hotfixSummary['TOTAL']['installed'] += 1;
+          break;
+        case 'Reverted':
+          this.hotfixSummary[hf.severity]['reverted'] += 1;
+          this.hotfixSummary['TOTAL']['reverted'] += 1;
+          break;
+        default:
+          break;
+      }
     });
 
     console.log(temp_data);
