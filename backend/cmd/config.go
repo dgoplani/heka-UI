@@ -22,6 +22,7 @@ const (
 	defaultNiosVersion        = ""
 	defaultManifestFile       = "/etc/storage/hekaui/nios_manifest.json"
 	defaultNiosHotfixPath     = "/etc/storage/hekaui/"
+	defaultOverrideConfFile   = "/etc/onprem.d/ui_test_conf.json"
 )
 
 var (
@@ -40,4 +41,5 @@ var (
 	flagNiosVersion    = flag.String("nios_version", defaultNiosVersion, "sleep time untill that hotfix data will be collected")
 	flagManifestFile   = flag.String("nios.manifest.file", defaultManifestFile, "nios hotfix manifest file after filter")
 	flagNiosHotfixFile = flag.String("nios.hotfix.path", defaultNiosHotfixPath, "nios hotfix file path")
+	flagOverrideFile   = flag.String("test.conf.file", defaultOverrideConfFile, "Override log level ")
 )

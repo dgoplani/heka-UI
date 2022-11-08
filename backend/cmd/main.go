@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -43,16 +46,49 @@ type Handle interface {
 
 var scripts = []string{"trigger_hotfix_manifest", "inject_http_redirection", "remove_http_redirection", "collect_grid_data"}
 
+type TestConf struct {
+	LogLevel string `json:"log.level"`
+}
+
+// confOverride fetches log level configuration from file
+func confOverride() (string, error) {
+	var value TestConf
+	jsonFile, err := os.Open(viper.GetString("test.conf.file"))
+	if err != nil {
+		// File is not present, so no conf override
+		return "", err
+	}
+	defer jsonFile.Close()
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		err = fmt.Errorf("failed to read file : %v", err)
+		fmt.Println(err)
+		return "", err
+	}
+	err = json.Unmarshal(byteValue, &value)
+	if err != nil {
+		err = fmt.Errorf("unmarshall failed: %v", err)
+		fmt.Println(err)
+		return "", err
+	}
+	return value.LogLevel, nil
+}
+
 func init() {
 	flag.Parse()
 
 	viper.BindPFlags(flag.CommandLine)
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	// confOverride should be enabled only in dev environment
+	logLevel, err := confOverride()
+	if err != nil {
+		logLevel = viper.GetString("log.level")
+	}
 
 	log.Setup(
 		viper.GetString("log.format"),
-		viper.GetString("log.level"),
+		logLevel,
 	)
 	if err := backend.ReadConfigFile(viper.GetString("param.file")); err != nil {
 		logger.Fatalf("Failed to read params into viper config", err)

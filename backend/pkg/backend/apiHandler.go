@@ -117,10 +117,10 @@ func NodeData(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	logger.Infoln("node data browser cookie", sess.Value)
+	logger.Debugln("node data browser cookie", sess.Value)
 	storedSessValue, ok := SessionMap.Load(sess.Value)
 	if ok {
-		logger.Infoln(" node stored session ", storedSessValue)
+		logger.Debugln(" node stored session ", storedSessValue)
 	} else {
 		logger.Errorln("node session got expired")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -153,17 +153,17 @@ func NodeData(w http.ResponseWriter, r *http.Request) {
 		respNode.Hotfixes = make([]HotFixData, 0)
 	}
 
-	logger.Infoln("node data is", respNode)
+	logger.Debugln("node data is", respNode)
 
 	jsonResponse, err := json.Marshal(respNode)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)
+	logger.Infoln("Successfully returned node data")
 }
 
 func ListNodes(w http.ResponseWriter, r *http.Request) {
@@ -176,10 +176,10 @@ func ListNodes(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	logger.Infoln("list browser cookie", sess.Value)
+	logger.Debugln("list browser cookie", sess.Value)
 	storedSessValue, ok := SessionMap.Load(sess.Value)
 	if ok {
-		logger.Infoln(" list stored session ", storedSessValue)
+		logger.Debugln(" list stored session ", storedSessValue)
 	} else {
 		logger.Errorln("list session got expired")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -198,7 +198,7 @@ func ListNodes(w http.ResponseWriter, r *http.Request) {
 		nodes = append(nodes, respNode)
 	}
 
-	logger.Infoln("list node data is", nodes)
+	logger.Debugln("list node data is", nodes)
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -210,6 +210,7 @@ func ListNodes(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(jsonResponse)
 	w.WriteHeader(http.StatusOK)
+	logger.Infoln("Successfully returned list node data")
 
 }
 
@@ -305,12 +306,13 @@ func getHotfixData(node Node) ([]HotFixData, error) {
 			response.Timestamp = y.(map[string]interface{})["timestamp"].(string)
 			responses = append(responses, response)
 		}
-		logger.Infof("hotfix response is %v", responses)
+		logger.Debugf("hotfix response is %v", responses)
 
 	} else {
 		logger.Errorf("File does not exist no hotfix data available")
 		return nil, fmt.Errorf("File does not exist no hotfix data available")
 	}
+	logger.Infoln("Successfully returned hotfix response")
 
 	return responses, nil
 }
@@ -357,10 +359,10 @@ func GridData(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	logger.Infoln("grid browser cookie", sess.Value)
+	logger.Debugln("grid browser cookie", sess.Value)
 	storedSessValue, ok := SessionMap.Load(sess.Value)
 	if ok {
-		logger.Infoln("grid stored session ", storedSessValue)
+		logger.Debugln("grid stored session ", storedSessValue)
 	} else {
 		logger.Errorln("session got expired login again")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -575,8 +577,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		res            *http.Response
 		adminUser      []map[string]interface{}
 		err            error
-		maxRetryPeriod = 2 * time.Minute
-		retryInterval  = 30 * time.Second
+		maxRetryPeriod = 1 * time.Minute
+		retryInterval  = 10 * time.Second
 	)
 	// TODO check creds or cookie
 	// Let's handle multiple tab seesion management later
@@ -594,17 +596,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if retryInterval > maxRetryPeriod {
 				logger.Errorf("validate user failed for userprofile %v", err)
-				continue
 			} else {
 				time.Sleep(retryInterval)
 				retryInterval = retryInterval * 2
-				logger.Errorf("Retrying  to validate user profile for %v", r)
+				logger.Errorf("Retrying to validate user profile for %v", err)
+				continue
 			}
 		}
 		break
 	}
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "validate user error")
+		return
+	}
 	if res.StatusCode != http.StatusOK {
-		http.Error(w, "Invalid status code", res.StatusCode)
+		http.Error(w, "Unauthorized error", res.StatusCode)
 		logger.Errorf("Unauthorized error:%v", res.StatusCode)
 		return
 	}
@@ -612,6 +618,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(result, &adminUser)
 	if err != nil {
 		logger.Errorf("Failed to unmarshall during validate user for Userprofile:%v", err)
+		respondWithError(w, http.StatusInternalServerError, "json marshal error")
 		return
 	}
 
@@ -624,21 +631,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	urladminGroup := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/admingroup?name=" + adminGroup + "&_return_fields=superuser"
 
+	retryInterval = 10 * time.Second
 	for {
 		result, res, err = validateUser(urladminGroup, login)
 		if err != nil {
-
 			if retryInterval > maxRetryPeriod {
 				logger.Errorf("validate user failed for userprofile %v", err)
-				continue
 			} else {
 				time.Sleep(retryInterval)
 				retryInterval = retryInterval * 2
-				logger.Errorf("Retrying  to validate user profile for %v", r)
+				logger.Errorf("Retrying to validate user profile for %v", err)
+				continue
 			}
-
 		}
 		break
+	}
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "validate user error")
+		return
 	}
 
 	if res.StatusCode != http.StatusOK {
@@ -657,33 +668,35 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	for _, y := range adminUser {
 		if y["superuser"] != nil {
 			superUser = y["superuser"].(bool)
-			if superUser == true {
-				logger.Infoln("its valid usecase pls proceed")
+			if superUser {
+				logger.Debugln("valid super user login")
 				break
-
 			} else {
-				respondWithError(w, http.StatusBadRequest, "Only superuser can be logged in")
+				respondWithError(w, http.StatusUnauthorized, "Only superuser can be logged in")
 				logger.Errorf("Only superuser can be logged in")
 				return
 			}
 		}
 	}
-	logger.Infof("superuser flag is %v  if true proceed to login", superUser)
-	retryInterval = 30 * time.Second
+	logger.Debugf("superuser flag is %v  proceed to login", superUser)
+	retryInterval = 10 * time.Second
 	for {
-		res, err = callWapiObject(w, r, "GET", "grid", "name", login)
+		res, err = callWapiObject("GET", "grid", "name", login)
 		if err != nil {
-
 			if retryInterval > maxRetryPeriod {
 				logger.Errorf("callWapiObject failed %v", err)
-				continue
 			} else {
 				time.Sleep(retryInterval)
 				retryInterval = retryInterval * 2
 				logger.Errorf("Retrying callWapiObject for %v", r)
+				continue
 			}
 		}
 		break
+	}
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "callWapiObject failed")
+		return
 	}
 	okresponse := res.StatusCode
 	logger.Infoln("okresponse", okresponse)
@@ -692,7 +705,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusUnauthorized, "Login Failed")
 		return
 	}
-	logger.Infoln("Response Cookie: ", res.Cookies())
+	logger.Debugln("Response Cookie: ", res.Cookies())
 	sess := cookieManager(res.Cookies())
 
 	if sess != "" {
@@ -703,7 +716,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, cookie)
 	} else {
 		logger.Errorln("cookiemanager session is empty")
-		//TODO handle
+		//TODO handle if get this error
 	}
 
 	logger.Infoln("Login successfull")
@@ -715,7 +728,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, payload)
 }
 
-func callWapiObject(w http.ResponseWriter, r *http.Request, method, object, returnField string, login LoginParams) (*http.Response, error) {
+func callWapiObject(method, object, returnField string, login LoginParams) (*http.Response, error) {
 	url := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/request"
 	var input []Manifesta
 	tr := &http.Transport{
@@ -724,7 +737,7 @@ func callWapiObject(w http.ResponseWriter, r *http.Request, method, object, retu
 
 	cli := &http.Client{
 		Transport: tr,
-		Timeout:   2600 * time.Second,
+		Timeout:   120 * time.Second,
 	}
 	// create request
 	input = []Manifesta{
@@ -739,14 +752,14 @@ func callWapiObject(w http.ResponseWriter, r *http.Request, method, object, retu
 
 	jsonStr, err := json.Marshal(input)
 	if err != nil {
-		fmt.Printf("Error while creating json input for API call: %v", err)
-		respondWithError(w, http.StatusInternalServerError, "json marshal error")
+		logger.Errorf("Error while creating json input for API call: %v", err)
+		return nil, err
 	}
 
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		fmt.Printf("Error while creating the request: %v", err)
-		respondWithError(w, http.StatusInternalServerError, "http request error")
+		logger.Errorf("Error while creating the request: %v", err)
+		return nil, err
 	}
 	//set request headers
 	req.SetBasicAuth(login.Uname, login.Password)
@@ -754,7 +767,6 @@ func callWapiObject(w http.ResponseWriter, r *http.Request, method, object, retu
 	res, err := cli.Do(req)
 	if err != nil {
 		logger.Errorf("Request failed - %v", err)
-		respondWithError(w, http.StatusInternalServerError, "server request error")
 		return res, err
 	}
 	defer res.Body.Close()
@@ -772,13 +784,13 @@ func validateUser(url string, login LoginParams) ([]byte, *http.Response, error)
 
 	cli := &http.Client{
 		Transport: tr,
-		Timeout:   2600 * time.Second,
+		Timeout:   120 * time.Second,
 	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		fmt.Printf("Error while creating the request: %v", err)
-		//respondWithError(w, http.StatusInternalServerError, "http request error")
+		logger.Errorf("Error while creating the request: %v", err)
+		return nil, nil, err
 	}
 	//set request headers
 	req.SetBasicAuth(login.Uname, login.Password)
@@ -786,7 +798,6 @@ func validateUser(url string, login LoginParams) ([]byte, *http.Response, error)
 	res, err := cli.Do(req)
 	if err != nil {
 		logger.Errorf("Request failed - %v", err)
-		//respondWithError(w, http.StatusInternalServerError, "server request error")
 		return nil, res, err
 	}
 	defer res.Body.Close()
@@ -807,7 +818,7 @@ func cookieManager(cke []*http.Cookie) string {
 	}
 
 	uuid := id.String()
-	logger.Infoln("random uuid :", uuid)
+	logger.Debugln("random uuid :", uuid)
 	if len(cke) != 0 {
 		SessionMap.Store(uuid, cke[0])
 	} else {
@@ -825,10 +836,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	logger.Infoln("logout client cookie", sess.Value)
+	logger.Debugln("logout client cookie", sess.Value)
 	actVal, ok := SessionMap.Load(sess.Value)
 	if ok {
-		logger.Infoln("logout session stored", actVal)
+		logger.Debugln("logout session stored", actVal)
 		SessionMap.Delete(sess.Value)
 	} else {
 		logger.Errorln("logout session already got expired")
