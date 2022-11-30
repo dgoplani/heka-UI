@@ -1,0 +1,5 @@
+#!/usr/bin/python
+import json
+
+def dump_json(data):
+    print(json.dumps('\u1234'))

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { GridData } from '../interfaces/grid-data';
 import { NodeData } from '../interfaces/node-data';
+import { ReadyStatus } from '../interfaces/ready-status';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +32,11 @@ export class UiService {
     var req_headers = new HttpHeaders();
     req_headers.append("Content-type", 'application/json');
     return this.http.get<NodeData[]>(this.server+"/list_nodes", {headers:req_headers, observe: 'body', withCredentials: true});
+  }
+
+  getReadyStatus(): Observable<ReadyStatus> {
+    var req_headers = new HttpHeaders();
+    req_headers.append("Content-type", 'application/json');
+    return this.http.get<ReadyStatus>(this.server+"/is_ready", {headers:req_headers, observe: 'body', withCredentials: true});
   }
 }

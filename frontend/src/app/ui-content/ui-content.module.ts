@@ -11,9 +11,9 @@ import { UiNotifyPlaneComponent } from './ui-notify-plane/ui-notify-plane.compon
 import { UiModalComponent } from './ui-modal/ui-modal.component';
 import { AppRoutingModule } from '../app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoadingComponent } from '../loading/loading.component';
 import { RouterModule } from '@angular/router';
 import { UiNotificationComponent } from './ui-notification/ui-notification.component';
+import { LoadingModule } from '../loading/loading.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +22,6 @@ import { UiNotificationComponent } from './ui-notification/ui-notification.compo
     UiHeaderComponent,
     UiHotfixComponent,
     UiNotifyPlaneComponent,
-    LoadingComponent,
     UiModalComponent,
     UiNotificationComponent
   ],
@@ -31,7 +30,8 @@ import { UiNotificationComponent } from './ui-notification/ui-notification.compo
     BrowserAnimationsModule,
     AppRoutingModule,
     FontAwesomeModule,
-    RouterModule
+    RouterModule,
+    LoadingModule
   ],
   exports: [
     UiComponent

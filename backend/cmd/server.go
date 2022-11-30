@@ -37,7 +37,6 @@ type SysStat struct {
 	NiosVersion string `json:"nios_version"`
 }
 
-//
 func (s *Server) Init(w *sync.WaitGroup) error {
 	s.wg = w
 	s.active = true
@@ -50,7 +49,6 @@ func (s *Server) Init(w *sync.WaitGroup) error {
 	return nil
 }
 
-//
 func (s *Server) Start() error {
 	//create a new router
 	router := mux.NewRouter()
@@ -70,6 +68,7 @@ func (s *Server) Start() error {
 		router.HandleFunc("/list_nodes", backend.ListNodes).Methods("GET")
 		router.HandleFunc("/login", backend.Login).Methods("POST")
 		router.HandleFunc("/logout", backend.Logout).Methods("POST")
+		router.HandleFunc("/is_ready", backend.IsReady).Methods("GET")
 
 		//start and listen to requests
 
@@ -111,7 +110,6 @@ func (s *Server) Stop() {
 	s.active = false
 }
 
-//
 func (s *Server) IsUP() bool {
 	return s.active
 }
@@ -169,7 +167,7 @@ func getNiosDataFromScript() (SysStat, error) {
 	return stat, nil
 }
 
-//isHekaUiValidToRunchecks whether valid to run check request on a particular grid
+// isHekaUiValidToRunchecks whether valid to run check request on a particular grid
 func isHekaUiValidToRun() bool {
 	x := viper.GetStringMap("labels")
 
@@ -180,7 +178,7 @@ func isHekaUiValidToRun() bool {
 	return false
 }
 
-//isHekaEnabled checks whether heka_optin flag is enabled
+// isHekaEnabled checks whether heka_optin flag is enabled
 func isHekaEnabled() bool {
 
 	if viper.GetBool("labels.heka_optin") {

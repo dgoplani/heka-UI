@@ -1,3 +1,9 @@
 <div class="container-fluid rootcss">
-  <router-outlet></router-outlet>
+  <ng-template *ngIf="isReady; then MainUI else NotReady"></ng-template>
+  <ng-template #NotReady>
+    <app-loading [size]=30 head="The BloxConnect UI is Not Ready, Please wait for sometime..."></app-loading>
+  </ng-template>
+  <ng-template #MainUI>
+    <router-outlet></router-outlet>
+  </ng-template>
 </div>

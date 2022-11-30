@@ -38,6 +38,10 @@ type GridResp struct {
 	GridName string `json:"name"`
 }
 
+type NiosReady struct {
+	Ready bool `json:"ready"`
+}
+
 type Node struct {
 	UniqueId        string       `json:"unique_id"`
 	Ip              string       `json:"ip"`
@@ -107,6 +111,53 @@ type Arguments struct {
 type LoginParams struct {
 	Uname    string `json:"username"`
 	Password string `json:"password"`
+}
+
+func IsReady(w http.ResponseWriter, r *http.Request) {
+	url := "http://" + viper.GetString("cnios.address") + ":" + viper.GetString("cnios.port") + "/nios/api/v1.0/nios/1/exec"
+	var isReady NiosReady
+	isReady.Ready = false
+
+	script := "testing_Nios"
+	input := struct {
+		Name string   `json:"name"`
+		Args []string `json:"args"`
+	}{script, nil}
+
+	jsonStr, err := json.Marshal(input)
+	if err != nil {
+		logger.Errorf("Error while creating json input for API call: %v", err)
+		jsonMarshal, _ := json.Marshal(isReady)
+		w.Write(jsonMarshal)
+		return
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		logger.Errorf("Error while creating the request: %v", err)
+		jsonMarshal, _ := json.Marshal(isReady)
+		w.Write(jsonMarshal)
+		return
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	cli := http.Client{Timeout: 5 * time.Second}
+	res, err := cli.Do(req)
+	if err != nil {
+		logger.Errorf("Request failed - %v", err)
+		jsonMarshal, _ := json.Marshal(isReady)
+		w.Write(jsonMarshal)
+		return
+	}
+	defer res.Body.Close()
+
+	if !(res.StatusCode == 500) {
+		logger.Infoln("NIOS is Running")
+		isReady.Ready = true
+	}
+	jsonMarshal, _ := json.Marshal(isReady)
+	w.Write(jsonMarshal)
 }
 
 func NodeData(w http.ResponseWriter, r *http.Request) {
@@ -488,7 +539,7 @@ func collectHotfixData(action string) {
 
 }
 
-//MakePostRequest will do HTTP POST request to connect to NIOS
+// MakePostRequest will do HTTP POST request to connect to NIOS
 func MakePostRequest(sec time.Duration, Method, object string, args string, sesskey string, sessCookie interface{}) (int, []byte, error) {
 	url := "https://" + "127.0.0.1" + "/wapi/" + viper.GetString("wapi.version") + "/request"
 	var input []Manifesta

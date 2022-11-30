@@ -13,6 +13,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NotificationService } from './ui-services/notification.service';
 import { AuthService } from './ui-services/auth.service';
+import { LoadingModule } from './loading/loading.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { AuthService } from './ui-services/auth.service';
     AppRoutingModule,
     HttpClientModule,
     UserAuthModule,
-    UiContentModule
+    UiContentModule,
+    LoadingModule
   ],
   providers: [
     NotificationService, 
